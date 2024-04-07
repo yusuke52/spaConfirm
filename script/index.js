@@ -27,6 +27,17 @@ const setPrefectureList = async () => {
     }
 }
 
+//市区町村リスト取得メソッドのエラーハンドラ捕捉用メソッド
+const setCityListWithErrHandler = async (prefectureid, cityid) => {
+
+    try{
+        await setCityList(prefectureid, cityid);
+    }catch(err){
+        window.alert(err);
+        console.log(err,"error");
+    }
+}
+
 //市区町村リスト取得メソッド（都道府県リスト（上位リスト）に紐づく、市区町村リスト取得メソッド）
 //(上位リストのonchangeイベントにバインドされ実行される。)
 //(fetchによりJSONファイルを丸々ダウンロードするので、本来であれば画面読み込み時に一度ダウンロード
@@ -92,8 +103,8 @@ const rowAdd = () => {
     cellElem = trElem.insertCell(2);
     cellElem.appendChild(cloneListElem);
 
-    //上位リストのonchangeイベントに、setCityListをバインド
-    document.getElementById('prefecture'+listIndex).onchange = setCityList.bind(null, 'prefecture'+listIndex, 'city'+listIndex);
+    //上位リストのonchangeイベントに、setCityList(エラー捕捉用)をバインド
+    document.getElementById('prefecture'+listIndex).onchange = setCityListWithErrHandler.bind(null, 'prefecture'+listIndex, 'city'+listIndex);
     
     return {prefectureElemID:'prefecture'+listIndex, cityElemID:'city'+listIndex};
 
