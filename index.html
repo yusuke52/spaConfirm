@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SPA仮作成</title>
+</head>
+<body>
+    <h2>連動リスト及び非同期通信でのDB更新処理</h2>
+
+    【新規登録モード】<button id="newRegist">新規登録モード切り替え</button><br>
+    【更新登録モード】登録ID:<input id="registID" type="number" style="width: 55px;" ></input><button id="dbSearch">参照</button>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    <button id="dbRegist">DB登録</button>&nbsp;&nbsp;<button id="reset">リセット</button><br>
+    <br>
+    <button id="tableRowAdd">行追加</button>
+    <button id="tableRowDel">行削除</button><br>
+
+    <table border="1" id="sample-table">
+        <th>削除</th>
+        <th>都道府県</th>
+        <th>市区町村</th>
+    </table>
+
+    <!-- 連動リスト原本（行追加時、リスト項目は以下の要素をコピーしたものを使用） -->
+    <div hidden>
+        <select id="prefectureMaster">
+            <option value="">選択してください</option>
+        </select>
+        <select id="cityMaster">
+            <option value="">選択してください</option>
+        </select>
+    </div>
+
+<!-- WebAPIからの値取得 start -->
+    <br>
+    <hr>
+    <h2>WebAPI（https://jsonplaceholder.typicode.com/users/）からの値取得</h2>
+    IDに1～10までの値を入力してください<br>
+    ID:<input id="inputID" type="number"></input><br>
+    <label id="result1"></label><br>
+    <label id="result2"></label><br>
+    <label id="result3"></label>
+<!-- WebAPIからの値取得 end -->
+
+    <script src="./script/index.js"></script>
+
+    <noscript>javascriptが利用できません。</noscript>    
+</body>
+</html>

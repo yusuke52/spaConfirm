@@ -1,0 +1,5 @@
+[
+    {"prefectureCd":"tokyo", "name":"東京都"},
+    {"prefectureCd":"osaka", "name":"大阪府"},
+    {"prefectureCd":"aichi", "name":"愛知県"}
+]
