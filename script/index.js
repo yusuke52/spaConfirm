@@ -1,16 +1,44 @@
 'use strict';
 
-//都道府県リスト取得メソッド
-const setPrefectureList = async () => {
-    try {            
-        //非同期通信によるJSONデータ取得
-        const res = await fetch("./json/prefecture.json");
+import gMessageJson from "../json/message.json" with { type: "json" };
+
+class JsonList{
+
+    constructor(filePath, displayName=''){
+        this.filePath = filePath;
+        this.displayName = displayName;
+    }
+
+    //JSONリスト取得処理
+    async get () {
+        //JSONデータ取得
+        const res = await fetch(this.filePath);
+
+        if (!res.ok) {
+            switch (res.status) {
+                case 400: throw new Error(getMessage('err400'));
+                case 401: throw new Error(getMessage('err401'));
+                case 404: throw new Error(getMessage('err404'));
+                case 500: throw new Error(getMessage('err500'));
+                default:  throw new Error(getMessage('err999'));
+            }
+        }
+
         const data = await res.json();
 
-        if (data.length == 0 ){
-            window.alert("都道府県データがありません。");
-            return;
-        }
+        if (data.length == 0 ) throw new Error(this.displayName+'データが0件です。');
+
+        return data;
+    }
+}
+
+//都道府県リスト取得メソッド
+const setPrefectureList = async () => {
+    try {
+
+        // 都道府県JSONリストの取得
+        let prefectureJson = new JsonList("./json/prefecture.json", "都道府県");
+        const data = await prefectureJson.get();
 
         const prefectureElem = document.getElementById("prefectureMaster");
         for (let i in data){
@@ -27,7 +55,36 @@ const setPrefectureList = async () => {
     }
 }
 
-//市区町村リスト取得メソッドのエラーハンドラ捕捉用メソッド
+//市区町村リスト取得メソッド（都道府県リスト（上位リスト）に紐づく、市区町村リスト取得メソッド）
+//(上位リストのonchangeイベントにバインドされ実行される。)
+//(fetchによりJSONファイルを丸々ダウンロードするので、本来であれば画面読み込み時に一度ダウンロード
+//(すればよいが、テスト用アプリのため、このままとする。)
+//(なお、PHP等のサーバサイドスクリプトから取得するようにした場合は、サーバ側でデータを絞り込めるので、
+//(onchangeイベント発生都度fetchによりデータ取得をするのは、有効な手段となる。)
+const setCityList = async (prefectureid, cityid) => {
+
+    // 市区町村JSONリストの取得
+    let cityJson = new JsonList("./json/city.json", "市区町村");
+    const data = await cityJson.get();
+
+    const prefectureElem = document.getElementById(prefectureid);
+
+    const cityElem = document.getElementById(cityid);
+    cityElem.options.length = 1
+
+    const cityIndex = data.findIndex(x => x.prefectureCd === prefectureElem.value);
+    const cityInfo = data[cityIndex].cityInfo;
+
+    for (let i in cityInfo){
+        let optionElem = document.createElement("option");
+        let value = cityInfo[i];
+        optionElem.value = value.cd;
+        optionElem.text = value.name;
+        cityElem.appendChild(optionElem);
+    };
+}
+
+//市区町村リスト取得メソッドのエラーハンドラ捕捉用ラッパーメソッド
 const setCityListWithErrHandler = async (prefectureid, cityid) => {
 
     try{
@@ -38,47 +95,11 @@ const setCityListWithErrHandler = async (prefectureid, cityid) => {
     }
 }
 
-//市区町村リスト取得メソッド（都道府県リスト（上位リスト）に紐づく、市区町村リスト取得メソッド）
-//(上位リストのonchangeイベントにバインドされ実行される。)
-//(fetchによりJSONファイルを丸々ダウンロードするので、本来であれば画面読み込み時に一度ダウンロード
-//(すればよいが、テスト用アプリのため、このままとする。)
-//(なお、PHP等のサーバサイドスクリプトから取得するようにした場合は、サーバ側でデータを絞り込めるので、
-//(onchangeイベント発生都度fetchによりデータ取得をするのは、有効な手段となる。)
-const setCityList = async (prefectureid, cityid) => {
-
-    //非同期通信によるJSONデータ取得
-    const res = await fetch("./json/city.json");
-    const data = await res.json();
-
-    if (data.length == 0 ){
-        window.alert("市区町村データがありません。");
-        return;
-    }
-
-    const prefectureElem = document.getElementById(prefectureid);
-    const changedPref = prefectureElem.value;
-    const cityElem = document.getElementById(cityid);
-    cityElem.options.length = 1
-
-    const cityIndex = data.findIndex(x => x.prefectureCd === changedPref);
-    const cityInfo = data[cityIndex].cityInfo;
-
-    for (let i in cityInfo){
-        let optionElem = document.createElement("option");
-        let value = cityInfo[i];
-        optionElem.value = value.cd;
-        optionElem.text = value.name;
-        cityElem.appendChild(optionElem);
-    };
-
-}
-
 //行追加メソッド
 const rowAdd = () => {
     const tableElem = document.getElementById('sample-table');
     let listIndex = tableElem.rows.length;
 
-    //行追加＆追加行へのリスト設定(連動2行目)
     //行追加
     const trElem = tableElem.tBodies[0].insertRow(-1);
     //チェックボックス要素作成し、新規行へ追加
@@ -149,7 +170,8 @@ const searchDB = async () => {
         const data = await res.json();
 
         if (data.length == 0 ){
-            window.alert("登録データがありません。");
+            //登録データ0件時エラーメッセージ
+            window.alert(getMessage('inf003'));
             return;
         }
 
@@ -164,7 +186,8 @@ const searchDB = async () => {
         //コントロールの入力可否設定
         controlSetting(true,true);
 
-        window.alert("読み込み完了しました。");
+        //読み込み完了メッセージ
+        window.alert(getMessage('inf001'));
 
     }catch (err) {
         window.alert(err);
@@ -220,7 +243,7 @@ const registDB = async () => {
         //登録されたデータの登録ID
         registIDElem.value = data.registID;
 
-        window.alert("登録しました。登録ID:"+data.registID);
+        window.alert(getMessage('inf002')+data.registID);
 
     }catch (err) {
         window.alert(err);
@@ -256,7 +279,7 @@ document.getElementById('newRegist').addEventListener('click', () => {
 });
 
 //コントロールの入力可否設定
-function controlSetting(canInputMode = false, keepRegistID = false) {
+const controlSetting = (canInputMode = false, keepRegistID = false) => {
 
     if ( canInputMode == false ){
         //リセットモード
@@ -281,11 +304,29 @@ function controlSetting(canInputMode = false, keepRegistID = false) {
     }
 }
 
-window.onload = () => {
-    //コントロールの入力可否設定
-    controlSetting();
+//メッセージ取得メソッド
+const getMessage = (cd) => {
+    try {
+        const messageIndex = gMessageJson.findIndex(x => x.cd === cd);
+        return gMessageJson[messageIndex].message;
+    }catch (err) {
+        window.alert(err);
+        console.log(err,"error");
+    }
+}
 
-    setPrefectureList();
+    window.onload = () => {
+
+    try{
+        //コントロールの入力可否設定
+        controlSetting();
+
+        setPrefectureList();
+
+    }catch(err){
+        window.alert(err);
+        console.log(err,"error");
+    }
 
 }
 
@@ -305,16 +346,11 @@ document.getElementById('inputID').addEventListener('blur', () => {
     .then(response => {
         if (!response.ok) {
             switch (response.status) {
-                case 400:
-                throw new Error('400 error');
-                case 401:
-                throw new Error('401 error');
-                case 404:
-                throw new Error('404 error');
-                case 500:
-                throw new Error('500 error');
-                default:
-                throw new Error('something error');
+                case 400: throw new Error(getMessage('err400'));
+                case 401: throw new Error(getMessage('err401'));
+                case 404: throw new Error(getMessage('err404'));
+                case 500: throw new Error(getMessage('err500'));
+                default:  throw new Error(getMessage('err999'));
             }
         }
         return response.json();
