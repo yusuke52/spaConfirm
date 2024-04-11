@@ -1,43 +1,14 @@
 'use strict';
 
 import gMessageJson from "../json/message.json" with { type: "json" };
-
-class JsonList{
-
-    constructor(filePath, displayName=''){
-        this.filePath = filePath;
-        this.displayName = displayName;
-    }
-
-    //JSONリスト取得処理
-    async get () {
-        //JSONデータ取得
-        const res = await fetch(this.filePath);
-
-        if (!res.ok) {
-            switch (res.status) {
-                case 400: throw new Error(getMessage('err400'));
-                case 401: throw new Error(getMessage('err401'));
-                case 404: throw new Error(getMessage('err404'));
-                case 500: throw new Error(getMessage('err500'));
-                default:  throw new Error(getMessage('err999'));
-            }
-        }
-
-        const data = await res.json();
-
-        if (data.length == 0 ) throw new Error(this.displayName+'データが0件です。');
-
-        return data;
-    }
-}
+import * as common from './common.js';
 
 //都道府県リスト取得メソッド
 const setPrefectureList = async () => {
     try {
 
         // 都道府県JSONリストの取得
-        let prefectureJson = new JsonList("./json/prefecture.json", "都道府県");
+        let prefectureJson = new common.JsonList("./json/prefecture.json", "都道府県");
         const data = await prefectureJson.get();
 
         const prefectureElem = document.getElementById("prefectureMaster");
@@ -64,7 +35,7 @@ const setPrefectureList = async () => {
 const setCityList = async (prefectureid, cityid) => {
 
     // 市区町村JSONリストの取得
-    let cityJson = new JsonList("./json/city.json", "市区町村");
+    let cityJson = new common.JsonList("./json/city.json", "市区町村");
     const data = await cityJson.get();
 
     const prefectureElem = document.getElementById(prefectureid);
@@ -171,7 +142,7 @@ const searchDB = async () => {
 
         if (data.length == 0 ){
             //登録データ0件時エラーメッセージ
-            window.alert(getMessage('inf003'));
+            window.alert(common.getMessage('inf003'));
             return;
         }
 
@@ -187,7 +158,7 @@ const searchDB = async () => {
         controlSetting(true,true);
 
         //読み込み完了メッセージ
-        window.alert(getMessage('inf001'));
+        window.alert(common.getMessage('inf001'));
 
     }catch (err) {
         window.alert(err);
@@ -243,7 +214,7 @@ const registDB = async () => {
         //登録されたデータの登録ID
         registIDElem.value = data.registID;
 
-        window.alert(getMessage('inf002')+data.registID);
+        window.alert(common.getMessage('inf002')+data.registID);
 
     }catch (err) {
         window.alert(err);
@@ -304,18 +275,7 @@ const controlSetting = (canInputMode = false, keepRegistID = false) => {
     }
 }
 
-//メッセージ取得メソッド
-const getMessage = (cd) => {
-    try {
-        const messageIndex = gMessageJson.findIndex(x => x.cd === cd);
-        return gMessageJson[messageIndex].message;
-    }catch (err) {
-        window.alert(err);
-        console.log(err,"error");
-    }
-}
-
-    window.onload = () => {
+window.onload = () => {
 
     try{
         //コントロールの入力可否設定
@@ -346,11 +306,11 @@ document.getElementById('inputID').addEventListener('blur', () => {
     .then(response => {
         if (!response.ok) {
             switch (response.status) {
-                case 400: throw new Error(getMessage('err400'));
-                case 401: throw new Error(getMessage('err401'));
-                case 404: throw new Error(getMessage('err404'));
-                case 500: throw new Error(getMessage('err500'));
-                default:  throw new Error(getMessage('err999'));
+                case 400: throw new Error(common.getMessage('err400'));
+                case 401: throw new Error(common.getMessage('err401'));
+                case 404: throw new Error(common.getMessage('err404'));
+                case 500: throw new Error(common.getMessage('err500'));
+                default:  throw new Error(common.getMessage('err999'));
             }
         }
         return response.json();
