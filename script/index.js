@@ -36,6 +36,8 @@ const setCityList = async (prefectureid, cityid) => {
 
     // 市区町村JSONリストの取得
     let cityJson = new common.JsonList("./json/city.json", "市区町村");
+    // let cityJson = common.JsonListFactory.of("./json/city.json", "市区町村");
+
     const data = await cityJson.get();
 
     const prefectureElem = document.getElementById(prefectureid);
@@ -66,6 +68,27 @@ const setCityListWithErrHandler = async (prefectureid, cityid) => {
     }
 }
 
+//市区町村リスト取得メソッドのエラーハンドラ捕捉用ラッパーメソッド
+const setTekikaku = async (tekikakuCdElemId, tekikakuNameElemId) => {
+
+    try{
+        let tekikakuCdElem = document.getElementById(tekikakuCdElemId);
+        let tekikakuNameElem = document.getElementById(tekikakuNameElemId);
+        if (tekikakuCdElem.value.trim() == '') {
+            tekikakuNameElem.innerText ='';
+            return;
+        }
+
+        let result = await common.getTekikaku(tekikakuCdElem.value);
+
+        tekikakuNameElem.innerText = result.name;
+
+    }catch(err){
+        window.alert(err);
+        console.log(err,"error");
+    }
+}
+
 //行追加メソッド
 const rowAdd = () => {
     const tableElem = document.getElementById('sample-table');
@@ -79,6 +102,7 @@ const rowAdd = () => {
     cbElem.id = 'selection'+listIndex;
     cbElem.setAttribute('name','selection');
     let cellElem = trElem.insertCell(0);
+    cellElem.setAttribute('align','center')
     cellElem.appendChild(cbElem);
 
     //連動リスト原本（上位リスト）をコピーし、新規行へ追加
@@ -97,7 +121,24 @@ const rowAdd = () => {
 
     //上位リストのonchangeイベントに、setCityList(エラー捕捉用)をバインド
     document.getElementById('prefecture'+listIndex).onchange = setCityListWithErrHandler.bind(null, 'prefecture'+listIndex, 'city'+listIndex);
-    
+
+    //テキスト要素作成し、適格請求書発行事業者コード入力欄として新規行へ追加
+    let textElem = document.createElement("input");
+    textElem.id = 'tekikakuNo'+listIndex;
+    textElem.setAttribute('class', 'tekikakuNo');
+    cellElem = trElem.insertCell(3);
+    cellElem.appendChild(textElem);
+
+    //ラベル要素作成し、適格請求書発行事業者名表示欄として新規行へ追加
+    let labelElem = document.createElement("label");
+    labelElem.id = 'tekikakuName'+listIndex;
+    labelElem.setAttribute('class', 'tekikakuName');
+    cellElem = trElem.insertCell(4);
+    cellElem.appendChild(labelElem);
+
+    //上位リストのonchangeイベントに、setCityList(エラー捕捉用)をバインド
+    document.getElementById('tekikakuNo'+listIndex).onblur = setTekikaku.bind(null, 'tekikakuNo'+listIndex, 'tekikakuName'+listIndex);
+
     return {prefectureElemID:'prefecture'+listIndex, cityElemID:'city'+listIndex};
 
 }

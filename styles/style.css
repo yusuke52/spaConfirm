@@ -1,0 +1,39 @@
+html {
+    background-color: #FAFAFA;
+    font-size: 20px;
+    font-family: 'Courier New';
+}
+
+h2 {
+    font-size: 30px;
+    text-align: center;
+}
+
+table {
+    font-size: 20px;
+}
+
+th {
+    background-color: #A9A9A9;  /* 背景色指定 */
+}
+
+tr:nth-child(odd) {
+    background-color: #D3D3D3;  /* 背景色指定 */
+}
+
+th,td {
+    padding: 5px 10px;      /* 余白指定 */
+}
+
+input,button,label,select {
+    font-size: 20px;
+}
+
+.tekikakuNo {
+    width: 185px;
+}
+
+.tekikakuName {
+    display: inline-block;
+    width: 800px;
+}

@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="styles/style.css" rel="stylesheet" />
     <title>SPA仮作成</title>
 </head>
 <body>
@@ -19,10 +20,12 @@
     <button id="tableRowAdd">行追加</button>
     <button id="tableRowDel">行削除</button><br>
 
-    <table border="1" id="sample-table">
-        <th>削除</th>
-        <th>都道府県</th>
-        <th>市区町村</th>
+    <table id="sample-table">
+        <th style="width: 40px;">削除</th>
+        <th style="width: 180px;">都道府県</th>
+        <th style="width: 180px;">市区町村</th>
+        <th style="width: 200px;">適格請求発行事業No.</th>
+        <th style="width: 830px;">適格請求書発行事業者名</th>
     </table>
 
     <!-- 連動リスト原本（行追加時、リスト項目は以下の要素をコピーしたものを使用） -->
