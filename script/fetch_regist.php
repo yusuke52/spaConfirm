@@ -34,14 +34,16 @@ try {
 	foreach(json_decode($raw) as $obj) {
 		$values .= $values!=='' ? ',' : '';
 		$rowNo = $obj->rowNo;
-		$values .= sprintf("(:registID%s,:rowNo%s,:prefecture%s,:city%s)", $rowNo, $rowNo, $rowNo, $rowNo);
+		$values .= sprintf("(:registID%s,:rowNo%s,:prefecture%s,:city%s,:tekikakuNo%s,:tekikakuName%s)", $rowNo, $rowNo, $rowNo, $rowNo, $rowNo, $rowNo);
 		$arr['registID'.$rowNo] = $registID;
 		$arr['rowNo'.$rowNo] = $obj->rowNo;
 		$arr['prefecture'.$rowNo] = $obj->prefecture;
 		$arr['city'.$rowNo] = $obj->city;
+		$arr['tekikakuNo'.$rowNo] = $obj->tekikakuNo;
+		$arr['tekikakuName'.$rowNo] = $obj->tekikakuName;
 	}
 
-	$stt = $db->prepare('insert into t_location (registID,rowNo,prefecture,city) values '.$values);
+	$stt = $db->prepare('insert into t_location (registID,rowNo,prefecture,city,tekikakuNo,tekikakuName) values '.$values);
 
 	//プレースホルダへ登録値のバインド
 	foreach($arr as $key => $value) $stt->bindValue(':'.$key, $value);

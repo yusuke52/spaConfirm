@@ -6,27 +6,48 @@ html {
 
 h2 {
     font-size: 30px;
-    text-align: center;
+    text-align: left;
+}
+
+.table_box{
+    overflow-y: auto;
+    /* border: 2px solid #000000; */
+    height: 424px;
+    width:1551px;
+    background-color: #F0F0F0;  /* 背景色指定 */
+    -webkit-overflow-scrolling: touch;
 }
 
 table {
     font-size: 20px;
+    width: 1530px;
 }
 
 th {
     background-color: #A9A9A9;  /* 背景色指定 */
 }
+.sticky {
+    position: sticky;
+    top: 0;
+    left: 0;
+    border-top: none;
+}
 
-tr:nth-child(odd) {
+.trDetail:nth-child(odd) {
     background-color: #D3D3D3;  /* 背景色指定 */
 }
 
-th,td {
+th,td[name="tdDetail"] {
     padding: 5px 10px;      /* 余白指定 */
+    white-space: nowrap;
 }
 
 input,button,label,select {
     font-size: 20px;
+}
+
+button {
+    width: 120px;
 }
 
 .tekikakuNo {

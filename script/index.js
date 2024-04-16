@@ -69,17 +69,17 @@ const setCityListWithErrHandler = async (prefectureid, cityid) => {
 }
 
 //市区町村リスト取得メソッドのエラーハンドラ捕捉用ラッパーメソッド
-const setTekikaku = async (tekikakuCdElemId, tekikakuNameElemId) => {
+const setTekikaku = async (tekikakuNoElemId, tekikakuNameElemId) => {
 
     try{
-        let tekikakuCdElem = document.getElementById(tekikakuCdElemId);
+        let tekikakuNoElem = document.getElementById(tekikakuNoElemId);
         let tekikakuNameElem = document.getElementById(tekikakuNameElemId);
-        if (tekikakuCdElem.value.trim() == '') {
+        if (tekikakuNoElem.value.trim() == '') {
             tekikakuNameElem.innerText ='';
             return;
         }
 
-        let result = await common.getTekikaku(tekikakuCdElem.value);
+        let result = await common.getTekikaku(tekikakuNoElem.value);
 
         tekikakuNameElem.innerText = result.name;
 
@@ -96,27 +96,22 @@ const rowAdd = () => {
 
     //行追加
     const trElem = tableElem.tBodies[0].insertRow(-1);
-    //チェックボックス要素作成し、新規行へ追加
-    let cbElem = document.createElement("input");
-    cbElem.setAttribute('type','checkbox');
-    cbElem.id = 'selection'+listIndex;
-    cbElem.setAttribute('name','selection');
-    let cellElem = trElem.insertCell(0);
-    cellElem.setAttribute('align','center')
-    cellElem.appendChild(cbElem);
+    trElem.setAttribute('class', 'trDetail');
 
     //連動リスト原本（上位リスト）をコピーし、新規行へ追加
     let listElem = document.getElementById('prefectureMaster');
     let cloneListElem = listElem.cloneNode(true);
     cloneListElem.id = 'prefecture'+listIndex;
-    cellElem = trElem.insertCell(1);
+    let cellElem = trElem.insertCell(0);
+    cellElem.setAttribute('name','tdDetail');
     cellElem.appendChild(cloneListElem);
 
     //連動リスト原本（下位リスト）をコピーし、新規行へ追加
     listElem = document.getElementById('cityMaster');
     cloneListElem = listElem.cloneNode(true);
     cloneListElem.id = 'city'+listIndex;
-    cellElem = trElem.insertCell(2);
+    cellElem = trElem.insertCell(1);
+    cellElem.setAttribute('name','tdDetail');
     cellElem.appendChild(cloneListElem);
 
     //上位リストのonchangeイベントに、setCityList(エラー捕捉用)をバインド
@@ -126,27 +121,43 @@ const rowAdd = () => {
     let textElem = document.createElement("input");
     textElem.id = 'tekikakuNo'+listIndex;
     textElem.setAttribute('class', 'tekikakuNo');
-    cellElem = trElem.insertCell(3);
+    cellElem = trElem.insertCell(2);
+    cellElem.setAttribute('name','tdDetail');
     cellElem.appendChild(textElem);
 
     //ラベル要素作成し、適格請求書発行事業者名表示欄として新規行へ追加
     let labelElem = document.createElement("label");
     labelElem.id = 'tekikakuName'+listIndex;
     labelElem.setAttribute('class', 'tekikakuName');
-    cellElem = trElem.insertCell(4);
+    cellElem = trElem.insertCell(3);
+    cellElem.setAttribute('name','tdDetail');
     cellElem.appendChild(labelElem);
 
-    //上位リストのonchangeイベントに、setCityList(エラー捕捉用)をバインド
+    //onblurイベントに、setTekikakuをバインド
     document.getElementById('tekikakuNo'+listIndex).onblur = setTekikaku.bind(null, 'tekikakuNo'+listIndex, 'tekikakuName'+listIndex);
 
-    return {prefectureElemID:'prefecture'+listIndex, cityElemID:'city'+listIndex};
+    //チェックボックス要素作成し、新規行へ追加
+    let cbElem = document.createElement("input");
+    cbElem.setAttribute('type','checkbox');
+    cbElem.id = 'selection'+listIndex;
+    cbElem.setAttribute('name','selection');
+    cellElem = trElem.insertCell(4);
+    cellElem.setAttribute('name','tdDetail');
+    cellElem.setAttribute('align','center')
+    cellElem.appendChild(cbElem);
+
+    return {prefectureElemID:'prefecture'+listIndex, 
+            cityElemID:'city'+listIndex, 
+            tekikakuNoElemID:'tekikakuNo'+listIndex, 
+            tekikakuNameElemID:'tekikakuName'+listIndex};
 
 }
 // 行追加ボタン押下時イベントリスナー
 document.getElementById('tableRowAdd').addEventListener('click', () => rowAdd());
 
 // 行削除ボタン押下時イベントリスナー
-document.getElementById('tableRowDel').addEventListener('click', () => {
+//document.getElementById('tableRowDel').addEventListener('click', () => {
+const rowDel = () => {
     //全行のリストボックス要素を取得
     const cbSelections = document.getElementsByName('selection');
     //チェックのついている行を削除
@@ -157,7 +168,10 @@ document.getElementById('tableRowDel').addEventListener('click', () => {
             elemTr.parentNode.deleteRow(elemTr.rowIndex);
         }
     }
-});
+}
+//行削除ボタン押下時イベントリスナー
+document.getElementById('tableRowDel').addEventListener('click', () => rowDel());
+
 
 //DB参照時メソッド
 const searchDB = async () => {
@@ -193,6 +207,8 @@ const searchDB = async () => {
             document.getElementById(result.prefectureElemID).value = data[i].prefecture;
             await setCityList(result.prefectureElemID, result.cityElemID);
             document.getElementById(result.cityElemID).value = data[i].city;
+            document.getElementById(result.tekikakuNoElemID).value = data[i].tekikakuNo;
+            document.getElementById(result.tekikakuNameElemID).innerText = data[i].tekikakuName;
         };
 
         //コントロールの入力可否設定
@@ -223,9 +239,11 @@ const registDB = async () => {
         for (let i = 1; i < rowElems.length; i++) {
             //対象行の各要素取得
             const tdElem = rowElems[i].children;
-            const chkboxElem = tdElem[0].children[0];
-            const prefectureElem = tdElem[1].children[0];
-            const cityElem = tdElem[2].children[0];
+            const prefectureElem = tdElem[0].children[0];
+            const cityElem = tdElem[1].children[0];
+            const tekikakuNoElem = tdElem[2].children[0];
+            const tekikakuNameElem = tdElem[3].children[0];
+            const chkboxElem = tdElem[4].children[0];
 
             //削除チェックボックスが選択されている行又は、上位リストが未選択の行は除外する。
             if (chkboxElem.checked) continue;
@@ -233,9 +251,22 @@ const registDB = async () => {
 
             //配列(tdArray)に、対象行の値を追加
             if (tdArray == null) {
-                tdArray = {[i] : {registID:registIDElem.value, rowNo:i, prefecture:prefectureElem.value, city:cityElem.value}} ;
+                tdArray = { [i] : {registID: registIDElem.value, 
+                                   rowNo: i, 
+                                   prefecture: prefectureElem.value, 
+                                   city: cityElem.value, 
+                                   tekikakuNo: tekikakuNoElem.value, 
+                                   tekikakuName: tekikakuNameElem.innerText}
+                          };
             }else{
-                tdArray = Object.assign(tdArray, { [i] : {registID:registIDElem.value, rowNo:i, prefecture:prefectureElem.value, city:cityElem.value} });
+                tdArray = Object.assign( tdArray, { [i] : {registID: registIDElem.value, 
+                                                           rowNo: i, 
+                                                           prefecture: prefectureElem.value, 
+                                                           city: cityElem.value, 
+                                                           tekikakuNo: tekikakuNoElem.value, 
+                                                           tekikakuName: tekikakuNameElem.innerText}
+                                                  }
+                                       );
             }
         }
 
@@ -254,6 +285,9 @@ const registDB = async () => {
 
         //登録されたデータの登録ID
         registIDElem.value = data.registID;
+
+        //行削除チェックボックスが選択されている行の削除
+        rowDel();
 
         window.alert(common.getMessage('inf002')+data.registID);
 

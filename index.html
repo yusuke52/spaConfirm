@@ -12,21 +12,37 @@
 
     <h2>連動リスト及び非同期通信でのDB更新処理</h2>
 
-    【新規登録モード】<button id="newRegist">新規登録モード切り替え</button><br>
-    【更新登録モード】登録ID:<input id="registID" type="number" style="width: 55px;" ></input><button id="dbSearch">参照</button>
+    【新規登録モード】<button id="newRegist" style="width: 250px;">新規登録モード切り替え</button><br>
+    【更新登録モード】
     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-    <button id="dbRegist">DB登録</button>&nbsp;&nbsp;<button id="reset">リセット</button><br>
+    &nbsp;&nbsp;<button id="reset">リセット</button><br>
     <br>
-    <button id="tableRowAdd">行追加</button>
-    <button id="tableRowDel">行削除</button><br>
-
-    <table id="sample-table">
-        <th style="width: 40px;">削除</th>
-        <th style="width: 180px;">都道府県</th>
-        <th style="width: 180px;">市区町村</th>
-        <th style="width: 200px;">適格請求発行事業No.</th>
-        <th style="width: 830px;">適格請求書発行事業者名</th>
+    <table>
+        <tr>
+            <td><label id="registIDTitle" style="width:140px; height:35px;font-weight:bold; text-align:center; display: inline-block; background-color: #A0A0A0;">登録ＩＤ</label>
+                <input id="registID" for="registIDTitle" type="number" style="width:70px; height:30px;"></input>
+                <button id="dbSearch">参照</button></td>
+            <td align="right"><button id="tableRowAdd">行追加</button>&nbsp;<button id="tableRowDel">選択行削除</button></td>
+        </tr>
     </table>
+
+    <div class="table_box">
+    <table id="sample-table">
+        <th class="sticky" style="width: 180px;">都道府県</th>
+        <th class="sticky" style="width: 180px;">市区町村</th>
+        <th class="sticky" style="width: 200px;">適格請求発行事業No.</th>
+        <th class="sticky" style="width: 830px;">適格請求書発行事業者名</th>
+        <th class="sticky" style="width: 40px;">選択</th>
+    </table>
+    </div>
+    <br>
+    <table>
+        <tr>
+            <td align="right"><button id="dbRegist">DB登録</button></td>
+        </tr>
+    </table>
+
+
 
     <!-- 連動リスト原本（行追加時、リスト項目は以下の要素をコピーしたものを使用） -->
     <div hidden>
