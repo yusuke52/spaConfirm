@@ -2,7 +2,8 @@
 
 $raw = file_get_contents('php://input'); 					// POSTされた生のデータを受け取る
 
-$dsn = 'mysql:dbname=testdb; host=127.0.0.1; charset=utf8';
+//$dsn = 'mysql:dbname=testdb; host=127.0.0.1; charset=utf8';
+$dsn = 'mysql:dbname=testdb; host=127.0.0.1; charset=utf8mb4';		//サロゲートペア対応
 $usr = 'root';
 $passwd = '';
 

@@ -271,7 +271,7 @@ const registDB = async () => {
         }
 
         if (tdArray == null){
-            window.alert("登録データがありません。");
+            window.alert(common.getMessage('inf004'));
             return;
         }
 

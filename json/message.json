@@ -2,6 +2,7 @@
     {"type":"info", "cd":"inf001", "message":"読み込み完了しました。"},
     {"type":"info", "cd":"inf002", "message":"登録完了しました。登録ID:"},
     {"type":"info", "cd":"inf003", "message":"登録データがありません。"},
+    {"type":"info", "cd":"inf004", "message":"登録対象のデータが１件もありません。"},
     {"type":"error", "cd":"err400", "message":"不正なリスエストにより処理できませんでした。(400エラー)"},
     {"type":"error", "cd":"err401", "message":"認証に失敗しました。(401エラー)"},
     {"type":"error", "cd":"err404", "message":"存在しないページにアクセスしました。(404エラー)"},
