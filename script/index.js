@@ -3,7 +3,7 @@
 import gMessageJson from "../json/message.json" with { type: "json" };
 import * as common from './common.js';
 
-//都道府県リスト取得メソッド
+//都道府県リスト設定メソッド
 const setPrefectureList = async () => {
     try {
 
@@ -26,7 +26,7 @@ const setPrefectureList = async () => {
     }
 }
 
-//市区町村リスト取得メソッド（都道府県リスト（上位リスト）に紐づく、市区町村リスト取得メソッド）
+//市区町村リスト設定メソッド（都道府県リスト（上位リスト）に紐づく、市区町村リスト取得メソッド）
 //(上位リストのonchangeイベントにバインドされ実行される。)
 //(fetchによりJSONファイルを丸々ダウンロードするので、本来であれば画面読み込み時に一度ダウンロード
 //(すればよいが、テスト用アプリのため、このままとする。)
@@ -57,7 +57,7 @@ const setCityList = async (prefectureid, cityid) => {
     };
 }
 
-//市区町村リスト取得メソッドのエラーハンドラ捕捉用ラッパーメソッド
+//市区町村リスト設定メソッドのエラーハンドラ捕捉用ラッパーメソッド
 const setCityListWithErrHandler = async (prefectureid, cityid) => {
 
     try{
@@ -68,7 +68,7 @@ const setCityListWithErrHandler = async (prefectureid, cityid) => {
     }
 }
 
-//市区町村リスト取得メソッドのエラーハンドラ捕捉用ラッパーメソッド
+//適格請求書発行事業者名設定メソッド
 const setTekikaku = async (tekikakuNoElemId, tekikakuNameElemId) => {
 
     try{
@@ -79,9 +79,17 @@ const setTekikaku = async (tekikakuNoElemId, tekikakuNameElemId) => {
             return;
         }
 
-        let result = await common.getTekikaku(tekikakuNoElem.value);
+        if (common.isTekikakuCdFormat(tekikakuNoElem.value) == false){
+            //適格請求書発行事業者コードが[T+数字13桁]の形式でないとき
+            window.alert(common.getMessage('inf007'));
+            tekikakuNoElem.value = '';
+            tekikakuNameElem.innerText ='';
+            return;
+        }
 
-        tekikakuNameElem.innerText = result.name;
+        let tekikakuInfo = await common.getTekikaku(tekikakuNoElem.value);
+
+        tekikakuNameElem.innerText = tekikakuInfo.name;
 
     }catch(err){
         window.alert(err);
@@ -121,6 +129,7 @@ const rowAdd = () => {
     let textElem = document.createElement("input");
     textElem.id = 'tekikakuNo'+listIndex;
     textElem.setAttribute('class', 'tekikakuNo');
+    textElem.setAttribute('maxlength', '14');
     cellElem = trElem.insertCell(2);
     cellElem.setAttribute('name','tdDetail');
     cellElem.appendChild(textElem);
@@ -335,9 +344,7 @@ const registButtonClick = () => {
     }
 }
 
-
 // DB登録ボタン押下時イベントリスナー
-//document.getElementById('registButton').addEventListener('click', registDB.bind(this));
 document.getElementById('registButton').addEventListener('click', registButtonClick.bind(this));
 
 //リセット時メソッド
