@@ -13,7 +13,7 @@ try {
 	$db->beginTransaction();
 
 	//呼び出し元から登録IDの取得
-	$registID = json_decode($raw,true)[1]['registID'];
+	$registID = json_decode($raw,true)['1']['registID'];
 
 	if ($registID == ''){
 		//新規登録時（登録ID新規採番）

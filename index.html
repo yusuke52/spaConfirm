@@ -11,11 +11,28 @@
     <script type="module" src="./script/index.js" defer></script>
 
     <h2>連動リスト及び非同期通信でのDB更新処理</h2>
-
-    【新規登録モード】<button id="newRegist" style="width: 250px;">新規登録モード切り替え</button><br>
-    【更新登録モード】
-    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-    &nbsp;&nbsp;<button id="reset">リセット</button><br>
+    <table>
+        <tr>
+            <td style="width:436px">
+                <form id="registMode">
+                    <fieldset style="width:400px">
+                    <legend>登録モード</legend>
+                        <input type="radio" id="insMode" name="dbRegistMode" value="insert" />
+                        <label for="insMode">新規</label>
+                        &nbsp;
+                        <input type="radio" id="updMode" name="dbRegistMode" value="update" checked />
+                        <label for="updMode">更新</label>
+                        &nbsp;
+                        <input type="radio" id="delMode" name="dbRegistMode" value="delete" />
+                        <label for="delMode">削除</label>
+                    </fieldset>
+                </form>
+            </td>
+            <td style="vertical-align:bottom">
+                <button id="reset">リセット</button>
+            </td>
+        </tr>
+    </table>
     <br>
     <table>
         <tr>
@@ -27,6 +44,7 @@
     </table>
 
     <div class="table_box">
+    <form id = "aaa" disabled="true">
     <table id="sample-table">
         <th class="sticky" style="width: 180px;">都道府県</th>
         <th class="sticky" style="width: 180px;">市区町村</th>
@@ -34,6 +52,7 @@
         <th class="sticky" style="width: 830px;">適格請求書発行事業者名</th>
         <th class="sticky" style="width: 40px;">選択</th>
     </table>
+    </form>
     </div>
     <br>
     <table>

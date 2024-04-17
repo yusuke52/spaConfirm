@@ -172,7 +172,6 @@ const rowDel = () => {
 //行削除ボタン押下時イベントリスナー
 document.getElementById('tableRowDel').addEventListener('click', () => rowDel());
 
-
 //DB参照時メソッド
 const searchDB = async () => {
     try {
@@ -212,7 +211,9 @@ const searchDB = async () => {
         };
 
         //コントロールの入力可否設定
-        controlSetting(true,true);
+//        controlSetting(true);
+        let canDetailInput = document.getElementById('registMode').dbRegistMode.value == 'delete';
+        controlSetting(true, canDetailInput);
 
         //読み込み完了メッセージ
         window.alert(common.getMessage('inf001'));
@@ -300,21 +301,29 @@ const registDB = async () => {
 document.getElementById('dbRegist').addEventListener('click', registDB.bind(this));
 
 //リセット時メソッド
-document.getElementById('reset').addEventListener('click', () => {
-
+const reset = () => {
     //コントロールの入力可否設定
     controlSetting();
+
+    document.getElementById('registID').value = '';
+
+    //登録モードを更新に設定
+    document.getElementById('registMode').dbRegistMode.value = 'update';
 
     //先頭行以外削除
     const tableElem = document.getElementById('sample-table');
     while (tableElem.rows.length > 1) tableElem.deleteRow(1);
-});
+}
+// リセットボタン押下時イベントリスナー
+document.getElementById('reset').addEventListener('click', reset.bind(this));
 
 //新規登録モード切替え時メソッド
-document.getElementById('newRegist').addEventListener('click', () => {
+const newRegist = () => {
 
     //コントロールの入力可否設定
     controlSetting(true);
+
+    document.getElementById('registID').value = '';
 
     //先頭行以外削除
     const tableElem = document.getElementById('sample-table');
@@ -322,32 +331,67 @@ document.getElementById('newRegist').addEventListener('click', () => {
 
     //新規行追加
     rowAdd();
+}
+
+//削除モード切り替えメソッド時メソッド
+const deleteData = () => {
+        //コントロールの入力可否設定
+        controlSetting();
+    
+        document.getElementById('registID').value = '';
+
+        //先頭行以外削除
+        const tableElem = document.getElementById('sample-table');
+        while (tableElem.rows.length > 1) tableElem.deleteRow(1);
+}
+
+// 登録モードラジオボタン変更時イベントリスナー
+const registMode = document.getElementById('registMode');
+registMode.addEventListener('change', () => {
+    switch (registMode.dbRegistMode.value) {
+        case 'insert': newRegist();
+        break;
+        case 'update': reset();
+        break;
+        case 'delete': deleteData();
+        break;
+        default:  throw new Error(common.getMessage('err999'));
+    }
 });
 
 //コントロールの入力可否設定
-const controlSetting = (canInputMode = false, keepRegistID = false) => {
+const controlSetting = (canInputMode = false, canDetailReadOnly = false) => {
 
     if ( canInputMode == false ){
         //リセットモード
-        const registIDElem = document.getElementById('registID');
-        if ( keepRegistID == false) registIDElem.value = '';
-        registIDElem.disabled = false;
+        document.getElementById('registID').disabled = false;
 
         document.getElementById('dbSearch').disabled = false;
         document.getElementById('dbRegist').disabled = true;
         document.getElementById('tableRowAdd').disabled = true;
         document.getElementById('tableRowDel').disabled = true;
+
     } else {
         //入力モード
-        const registIDElem = document.getElementById('registID');
-        if (keepRegistID == false) registIDElem.value = '';
-        registIDElem.disabled = true;
+        document.getElementById('registID').disabled = true;
 
         document.getElementById('dbSearch').disabled = true;
         document.getElementById('dbRegist').disabled = false;
         document.getElementById('tableRowAdd').disabled = false;
         document.getElementById('tableRowDel').disabled = false;
     }
+
+    if ( canDetailReadOnly == true ){
+        //明細読み取り専用時
+        document.getElementById('tableRowAdd').disabled = true;
+        document.getElementById('tableRowDel').disabled = true;
+
+        let list = document.getElementsByName('tdDetail');
+        for (let elem of list){
+            elem.childNodes[0].disabled = true;
+        }
+    }
+
 }
 
 window.onload = () => {
