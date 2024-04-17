@@ -297,8 +297,48 @@ const registDB = async () => {
         console.log(err,"error");
     }
 }
+
+//DB登録時メソッド
+const deleteDB = async () => {
+    try {
+        const registIDElem = document.getElementById('registID');     //登録ID
+
+        if (registIDElem.value.trim() == ''){
+            window.alert("登録IDを半角数字で入力してください。");
+            return;
+        }
+
+        //非同期通信によるDBからのデータ削除
+        const res = await fetch("./script/fetch_delete.php", { 					
+            method: 'POST', 									
+            headers: { 'Content-Type': 'application/json' }, 	
+            body: JSON.stringify(registIDElem.value) 							
+        });
+        const data = await res.json();
+
+        // //削除されたデータの登録ID
+        // registIDElem.value = data.registID;
+
+        window.alert(common.getMessage('inf005')+data.registID);
+
+    }catch (err) {
+        window.alert(err);
+        console.log(err,"error");
+    }
+}
+
+const registButtonClick = () => {
+    if (document.getElementById('registMode').dbRegistMode.value != 'delete') {
+        registDB();
+    } else {
+        deleteDB();
+    }
+}
+
+
 // DB登録ボタン押下時イベントリスナー
-document.getElementById('dbRegist').addEventListener('click', registDB.bind(this));
+//document.getElementById('registButton').addEventListener('click', registDB.bind(this));
+document.getElementById('registButton').addEventListener('click', registButtonClick.bind(this));
 
 //リセット時メソッド
 const reset = () => {
@@ -367,7 +407,7 @@ const controlSetting = (canInputMode = false, canDetailReadOnly = false) => {
         document.getElementById('registID').disabled = false;
 
         document.getElementById('dbSearch').disabled = false;
-        document.getElementById('dbRegist').disabled = true;
+        document.getElementById('registButton').disabled = true;
         document.getElementById('tableRowAdd').disabled = true;
         document.getElementById('tableRowDel').disabled = true;
 
@@ -376,7 +416,7 @@ const controlSetting = (canInputMode = false, canDetailReadOnly = false) => {
         document.getElementById('registID').disabled = true;
 
         document.getElementById('dbSearch').disabled = true;
-        document.getElementById('dbRegist').disabled = false;
+        document.getElementById('registButton').disabled = false;
         document.getElementById('tableRowAdd').disabled = false;
         document.getElementById('tableRowDel').disabled = false;
     }
