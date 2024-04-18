@@ -37,10 +37,10 @@ try {
 //①DB接続ありパターン end
 
 //②DB接続なしパターン（DB接続環境がない場合、①DB接続ありパターンをコメントアウトし、②DB接続なしパターンをコメント解除してください。） start
-	// $result = array(array('id'=>12,'registID'=>1,'rowNo'=>1,'prefecture'=>'tokyo','city'=>'1'),
-	// 				array('id'=>13,'registID'=>1,'rowNo'=>2,'prefecture'=>'osaka','city'=>'2'),
-	// 				array('id'=>14,'registID'=>1,'rowNo'=>3,'prefecture'=>'aichi','city'=>'1'),
-	// 				array('id'=>15,'registID'=>1,'rowNo'=>4,'prefecture'=>'tokyo','city'=>'3'));
+	// $result = array(array('id'=>1,'registID'=>1,'rowNo'=>1,'prefecture'=>'tokyo','city'=>'1','tekikakuNo'=>'T1030005007532','tekikakuName'=>'𠀋宮代町商工会'),
+	// 				array('id'=>2,'registID'=>1,'rowNo'=>2,'prefecture'=>'osaka','city'=>'2','tekikakuNo'=>'T1700150000224','tekikakuName'=>'𠀋Ａｉｒ　Ｎｉｕｇｉｎｉ　Ｌｉｍｉｔｅｄ'),
+	// 				array('id'=>3,'registID'=>1,'rowNo'=>3,'prefecture'=>'aichi','city'=>'1','tekikakuNo'=>'T1700150000232','tekikakuName'=>'ＡＢＡＣ日本支援協議会'),
+	// 				array('id'=>4,'registID'=>1,'rowNo'=>4,'prefecture'=>'tokyo','city'=>'3','tekikakuNo'=>'T1700150000629','tekikakuName'=>'謙慎書道会'));
 
 	// $json_array = json_encode($result, JSON_UNESCAPED_UNICODE);
 

@@ -29,30 +29,30 @@
                 </form>
             </td>
             <td style="vertical-align:bottom">
-                <button id="reset">リセット</button>
+                <button id="resetButton">リセット</button>
             </td>
         </tr>
     </table>
     <br>
     <table>
         <tr>
-            <td><label id="registIDTitle" style="width:140px; height:35px;font-weight:bold; text-align:center; display: inline-block; background-color: #909090;">登録ＩＤ</label>
-                <input id="registID" for="registIDTitle" type="number" style="width:70px; height:30px;"></input>
-                <button id="dbSearch">参照</button></td>
-            <td align="right"><button id="tableRowAdd">行追加</button>&nbsp;<button id="tableRowDel">選択行削除</button></td>
+            <td class="headerTitle">登録ＩＤ</td>
+            <td style="width:77px;"><input id="registID" type="number" style="width:70px; height:29px;"></input></td>
+            <td style="width:122px;"><button id="searchButton">参照</button></td>
+            <td></td>
+            <td style="width:122px;"><button id="addRowButton">行追加</button></td>
+            <td style="width:122px;"><button id="delRowButton">選択行削除</button></td>
         </tr>
     </table>
 
-    <div class="table_box">
-    <form id = "aaa" disabled="true">
-    <table id="sample-table">
+    <div class="tableBox">
+    <table id="detailTable">
         <th class="sticky" style="width: 180px;">都道府県</th>
         <th class="sticky" style="width: 180px;">市区町村</th>
         <th class="sticky" style="width: 200px;">適格請求発行事業No.</th>
-        <th class="sticky" style="width: 830px;">適格請求書発行事業者名</th>
+        <th class="sticky" style="width: 830px;">適格請求書発行事業者名（「人格のない社団等」のみ対応）</th>
         <th class="sticky" style="width: 40px;">選択</th>
     </table>
-    </form>
     </div>
     <br>
     <table>

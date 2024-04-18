@@ -4,14 +4,29 @@ html {
     font-family: 'Courier New';
 }
 
+input,button,label,select {
+    font-size: 20px;
+}
+
+button {
+    width: 120px;
+}
+
 h2 {
     font-size: 30px;
     text-align: left;
 }
 
-.table_box{
+.headerTitle {
+    width:140px;
+    font-weight:bold;
+    text-align:center;
+    background-color:#909090;
+}
+
+.tableBox{
     overflow-y: auto;
-    /* border: 2px solid #000000; */
+    border: 2px solid #000000;
     height: 424px;
     width:1551px;
     background-color: #F0F0F0;  /* 背景色指定 */
@@ -40,14 +55,6 @@ th {
 th,td[name="tdDetail"] {
     padding: 5px 10px;      /* 余白指定 */
     white-space: nowrap;
-}
-
-input,button,label,select {
-    font-size: 20px;
-}
-
-button {
-    width: 120px;
 }
 
 .tekikakuNo {

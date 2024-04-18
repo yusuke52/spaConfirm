@@ -1,14 +1,20 @@
 'use strict';
 
-import gMessageJson from "../json/message.json" with { type: "json" };
 import * as common from './common.js';
 
-//都道府県リスト設定メソッド
+/**
+ * 都道府県リスト設定メソッド
+ * @method
+ * @description prefecture.jsonに設定されている都道府県リストを、prefectureMasterリストに設定する。
+ * @author Y.Y
+ * @version 1.0.0
+ */
 const setPrefectureList = async () => {
     try {
 
         // 都道府県JSONリストの取得
-        let prefectureJson = new common.JsonList("./json/prefecture.json", "都道府県");
+        // let prefectureJson = new common.JsonList("./json/prefecture.json", "都道府県");
+        let prefectureJson = common.JsonListFactory.of("./json/prefecture.json", "都道府県");
         const data = await prefectureJson.get();
 
         const prefectureElem = document.getElementById("prefectureMaster");
@@ -26,18 +32,22 @@ const setPrefectureList = async () => {
     }
 }
 
-//市区町村リスト設定メソッド（都道府県リスト（上位リスト）に紐づく、市区町村リスト取得メソッド）
-//(上位リストのonchangeイベントにバインドされ実行される。)
-//(fetchによりJSONファイルを丸々ダウンロードするので、本来であれば画面読み込み時に一度ダウンロード
-//(すればよいが、テスト用アプリのため、このままとする。)
-//(なお、PHP等のサーバサイドスクリプトから取得するようにした場合は、サーバ側でデータを絞り込めるので、
-//(onchangeイベント発生都度fetchによりデータ取得をするのは、有効な手段となる。)
+/**
+ * 市区町村リスト設定メソッド
+ * @method
+ * @param {string} prefectureid 都道府県リスト要素のid
+ * @param {string} cityid 市区町村リスト要素のid
+ * @description 都道府県リスト（上位リスト）に紐づく、市区町村リストを設定する。
+ * @author Y.Y
+ * @version 1.0.0
+ */
 const setCityList = async (prefectureid, cityid) => {
 
-    // 市区町村JSONリストの取得
-    let cityJson = new common.JsonList("./json/city.json", "市区町村");
-    // let cityJson = common.JsonListFactory.of("./json/city.json", "市区町村");
-
+    //当システムではfetchにより市区町村JSONを丸々ダウンロードしており、データ量の増加によりトラフィック増加が懸念
+    //されるが、テスト用アプリのため、このままとする。
+    //(なお、PHP等のサーバサイドスクリプトから取得するようにした場合は、サーバ側でデータを絞り込めるので、上記の問題は解消される。）
+    // let cityJson = new common.JsonList('./json/city.json', '市区町村');
+    let cityJson = common.JsonListFactory.of('./json/city.json', '市区町村');
     const data = await cityJson.get();
 
     const prefectureElem = document.getElementById(prefectureid);
@@ -57,7 +67,19 @@ const setCityList = async (prefectureid, cityid) => {
     };
 }
 
-//市区町村リスト設定メソッドのエラーハンドラ捕捉用ラッパーメソッド
+/**
+ * 市区町村リスト設定メソッドのエラーハンドラ捕捉用ラッパーメソッド
+ * @method
+ * @param {string} prefectureid 都道府県リスト要素のid
+ * @param {string} cityid 市区町村リスト要素のid
+ * @description setCityListは、都道府県リストのonchangeイベント時と、DB読込み時（データの件数分）に参照されるが、\
+ *              setCityList内でエラーハンドラを捕捉するとDB読込み時にエラー発生が発生した場合、都度エラーが発生することになる事から、\
+ *              setCityList内でのエラーハンドラを捕捉しないようにした。\
+ *              上記理由による代替対応として、都道府県リストのonchangeイベント時（ループ内で複数参照時）にsetCityListを参照する場合は、\
+ *              当メソッドを経由する事。
+ * @author Y.Y
+ * @version 1.0.0
+ */
 const setCityListWithErrHandler = async (prefectureid, cityid) => {
 
     try{
@@ -68,7 +90,15 @@ const setCityListWithErrHandler = async (prefectureid, cityid) => {
     }
 }
 
-//適格請求書発行事業者名設定メソッド
+/**
+ * 適格請求書発行事業者名設定メソッド
+ * @method
+ * @param {string} tekikakuNoElemId 適格請求書発行事業者No要素のid
+ * @param {string} tekikakuNameElemId 適格請求書発行事業者名要素のid
+ * @description 適格請求書発行事業者Noに紐づく、適格請求書発行事業者名を設定する。
+ * @author Y.Y
+ * @version 1.0.0
+ */
 const setTekikaku = async (tekikakuNoElemId, tekikakuNameElemId) => {
 
     try{
@@ -79,8 +109,8 @@ const setTekikaku = async (tekikakuNoElemId, tekikakuNameElemId) => {
             return;
         }
 
-        if (common.isTekikakuCdFormat(tekikakuNoElem.value) == false){
-            //適格請求書発行事業者コードが[T+数字13桁]の形式でないとき
+        if (common.isTekikakuNoFormat(tekikakuNoElem.value) == false){
+            //適格請求書発行事業者Noが[T+数字13桁]の形式でないとき
             window.alert(common.getMessage('inf007'));
             tekikakuNoElem.value = '';
             tekikakuNameElem.innerText ='';
@@ -97,9 +127,16 @@ const setTekikaku = async (tekikakuNoElemId, tekikakuNameElemId) => {
     }
 }
 
-//行追加メソッド
+/**
+ * 行追加メソッド
+ * @method
+ * @description 明細テーブルに行を追加する。
+ * @return {object} 追加行に設定した各要素のid
+ * @author Y.Y
+ * @version 1.0.0
+ */
 const rowAdd = () => {
-    const tableElem = document.getElementById('sample-table');
+    const tableElem = document.getElementById('detailTable');
     let listIndex = tableElem.rows.length;
 
     //行追加
@@ -125,7 +162,7 @@ const rowAdd = () => {
     //上位リストのonchangeイベントに、setCityList(エラー捕捉用)をバインド
     document.getElementById('prefecture'+listIndex).onchange = setCityListWithErrHandler.bind(null, 'prefecture'+listIndex, 'city'+listIndex);
 
-    //テキスト要素作成し、適格請求書発行事業者コード入力欄として新規行へ追加
+    //テキスト要素作成し、適格請求書発行事業者No入力欄として新規行へ追加
     let textElem = document.createElement("input");
     textElem.id = 'tekikakuNo'+listIndex;
     textElem.setAttribute('class', 'tekikakuNo');
@@ -162,10 +199,15 @@ const rowAdd = () => {
 
 }
 // 行追加ボタン押下時イベントリスナー
-document.getElementById('tableRowAdd').addEventListener('click', () => rowAdd());
+document.getElementById('addRowButton').addEventListener('click', () => rowAdd());
 
-// 行削除ボタン押下時イベントリスナー
-//document.getElementById('tableRowDel').addEventListener('click', () => {
+/**
+ * 行削除メソッド
+ * @method
+ * @description 選択チェックボックスにチェックされている行をテーブルから削除する。
+ * @author Y.Y
+ * @version 1.0.0
+ */
 const rowDel = () => {
     //全行のリストボックス要素を取得
     const cbSelections = document.getElementsByName('selection');
@@ -179,35 +221,31 @@ const rowDel = () => {
     }
 }
 //行削除ボタン押下時イベントリスナー
-document.getElementById('tableRowDel').addEventListener('click', () => rowDel());
+document.getElementById('delRowButton').addEventListener('click', () => rowDel());
 
-//DB参照時メソッド
-const searchDB = async () => {
+/**
+ * 明細テーブル設定メソッド
+ * @method
+ * @description 登録IDに該当するデータをDBから取得し、明細テーブルに設定する。
+ * @author Y.Y
+ * @version 1.0.0
+ */
+const setDetailData = async () => {
     try {
         const registIDElem = document.getElementById('registID');     //登録ID
 
         if (registIDElem.value.trim() == ''){
-            window.alert("登録IDを半角数字で入力してください。");
+            //登録ID未入力時エラー
+            window.alert(common.getMessage('inf008'));
             return;
         }
-
-        //先頭行以外削除
-        const tableElem = document.getElementById('sample-table');
-        while (tableElem.rows.length > 1) tableElem.deleteRow(1);
 
         //非同期通信によるDBからのデータ取得
-        const res = await fetch("./script/fetch_select.php", { 					
-            method: 'POST', 									
-            headers: { 'Content-Type': 'application/json' }, 	
-            body: JSON.stringify(registIDElem.value) 							
-        });
-        const data = await res.json();
+        const data = await common.searchDB(registIDElem.value);
 
-        if (data.length == 0 ){
-            //登録データ0件時エラーメッセージ
-            window.alert(common.getMessage('inf003'));
-            return;
-        }
+        //先頭行以外削除
+        const tableElem = document.getElementById('detailTable');
+        while (tableElem.rows.length > 1) tableElem.deleteRow(1);
 
         //取得した値をテーブルに追加
         for (let i in data){
@@ -220,7 +258,6 @@ const searchDB = async () => {
         };
 
         //コントロールの入力可否設定
-//        controlSetting(true);
         let canDetailInput = document.getElementById('registMode').dbRegistMode.value == 'delete';
         controlSetting(true, canDetailInput);
 
@@ -233,7 +270,7 @@ const searchDB = async () => {
     }
 }
 // 参照ボタン押下時イベントリスナー
-document.getElementById('dbSearch').addEventListener('click', searchDB.bind(this));
+document.getElementById('searchButton').addEventListener('click', setDetailData.bind(this));
 
 //DB登録時メソッド
 const registDB = async () => {
@@ -241,10 +278,10 @@ const registDB = async () => {
     try {
         const registIDElem = document.getElementById('registID');
 
-        const tableElem = document.getElementById('sample-table');
+        const tableElem = document.getElementById('detailTable');
         const rowElems = tableElem.rows;
 
-        //sample-tableテーブルに入力された内容を配列(tdArray)に設定
+        //detailTableテーブルに入力された内容を配列(tdArray)に設定
         let tdArray = null;
         for (let i = 1; i < rowElems.length; i++) {
             //対象行の各要素取得
@@ -358,11 +395,11 @@ const reset = () => {
     document.getElementById('registMode').dbRegistMode.value = 'update';
 
     //先頭行以外削除
-    const tableElem = document.getElementById('sample-table');
+    const tableElem = document.getElementById('detailTable');
     while (tableElem.rows.length > 1) tableElem.deleteRow(1);
 }
 // リセットボタン押下時イベントリスナー
-document.getElementById('reset').addEventListener('click', reset.bind(this));
+document.getElementById('resetButton').addEventListener('click', reset.bind(this));
 
 //新規登録モード切替え時メソッド
 const newRegist = () => {
@@ -373,11 +410,13 @@ const newRegist = () => {
     document.getElementById('registID').value = '';
 
     //先頭行以外削除
-    const tableElem = document.getElementById('sample-table');
+    const tableElem = document.getElementById('detailTable');
     while (tableElem.rows.length > 1) tableElem.deleteRow(1);
 
     //新規行追加
-    rowAdd();
+    for (let i = 0; i < 10; i++){
+        rowAdd();
+    }
 }
 
 //削除モード切り替えメソッド時メソッド
@@ -388,7 +427,7 @@ const deleteData = () => {
         document.getElementById('registID').value = '';
 
         //先頭行以外削除
-        const tableElem = document.getElementById('sample-table');
+        const tableElem = document.getElementById('detailTable');
         while (tableElem.rows.length > 1) tableElem.deleteRow(1);
 }
 
@@ -413,25 +452,25 @@ const controlSetting = (canInputMode = false, canDetailReadOnly = false) => {
         //リセットモード
         document.getElementById('registID').disabled = false;
 
-        document.getElementById('dbSearch').disabled = false;
+        document.getElementById('searchButton').disabled = false;
         document.getElementById('registButton').disabled = true;
-        document.getElementById('tableRowAdd').disabled = true;
-        document.getElementById('tableRowDel').disabled = true;
+        document.getElementById('addRowButton').disabled = true;
+        document.getElementById('delRowButton').disabled = true;
 
     } else {
         //入力モード
         document.getElementById('registID').disabled = true;
 
-        document.getElementById('dbSearch').disabled = true;
+        document.getElementById('searchButton').disabled = true;
         document.getElementById('registButton').disabled = false;
-        document.getElementById('tableRowAdd').disabled = false;
-        document.getElementById('tableRowDel').disabled = false;
+        document.getElementById('addRowButton').disabled = false;
+        document.getElementById('delRowButton').disabled = false;
     }
 
     if ( canDetailReadOnly == true ){
         //明細読み取り専用時
-        document.getElementById('tableRowAdd').disabled = true;
-        document.getElementById('tableRowDel').disabled = true;
+        document.getElementById('addRowButton').disabled = true;
+        document.getElementById('delRowButton').disabled = true;
 
         let list = document.getElementsByName('tdDetail');
         for (let elem of list){
