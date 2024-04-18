@@ -224,13 +224,13 @@ const rowDel = () => {
 document.getElementById('delRowButton').addEventListener('click', () => rowDel());
 
 /**
- * 明細テーブル設定メソッド
+ * 参照ボタンクリック時メソッド
  * @method
  * @description 登録IDに該当するデータをDBから取得し、明細テーブルに設定する。
  * @author Y.Y
  * @version 1.0.0
  */
-const setDetailData = async () => {
+const searchButtonClick = async () => {
     try {
         const registIDElem = document.getElementById('registID');     //登録ID
 
@@ -247,7 +247,7 @@ const setDetailData = async () => {
         const tableElem = document.getElementById('detailTable');
         while (tableElem.rows.length > 1) tableElem.deleteRow(1);
 
-        //取得した値をテーブルに追加
+        //取得した値を明細テーブルに追加
         for (let i in data){
             let result = rowAdd();
             document.getElementById(result.prefectureElemID).value = data[i].prefecture;
@@ -270,10 +270,16 @@ const setDetailData = async () => {
     }
 }
 // 参照ボタン押下時イベントリスナー
-document.getElementById('searchButton').addEventListener('click', setDetailData.bind(this));
+document.getElementById('searchButton').addEventListener('click', searchButtonClick.bind(this));
 
-//DB登録時メソッド
-const registDB = async () => {
+/**
+ * DBへのデータ登録プロセスメソッド
+ * @method
+ * @description 明細テーブルに設定されたデータを配列に格納した後、DBへのデータ登録用メソッドを実行する。
+ * @author Y.Y
+ * @version 1.0.0
+ */
+const registProcess = async () => {
 
     try {
         const registIDElem = document.getElementById('registID');
@@ -281,8 +287,8 @@ const registDB = async () => {
         const tableElem = document.getElementById('detailTable');
         const rowElems = tableElem.rows;
 
-        //detailTableテーブルに入力された内容を配列(tdArray)に設定
-        let tdArray = null;
+        //detailTableテーブルに入力された内容を配列(registData)に設定
+        let registData = null;
         for (let i = 1; i < rowElems.length; i++) {
             //対象行の各要素取得
             const tdElem = rowElems[i].children;
@@ -296,9 +302,9 @@ const registDB = async () => {
             if (chkboxElem.checked) continue;
             if (prefectureElem.value == '') continue;
 
-            //配列(tdArray)に、対象行の値を追加
-            if (tdArray == null) {
-                tdArray = { [i] : {registID: registIDElem.value, 
+            //配列(registData)に、対象行の値を追加
+            if (registData == null) {
+                registData = { [i] : {registID: registIDElem.value, 
                                    rowNo: i, 
                                    prefecture: prefectureElem.value, 
                                    city: cityElem.value, 
@@ -306,7 +312,7 @@ const registDB = async () => {
                                    tekikakuName: tekikakuNameElem.innerText}
                           };
             }else{
-                tdArray = Object.assign( tdArray, { [i] : {registID: registIDElem.value, 
+                registData = Object.assign( registData, { [i] : {registID: registIDElem.value, 
                                                            rowNo: i, 
                                                            prefecture: prefectureElem.value, 
                                                            city: cityElem.value, 
@@ -317,26 +323,23 @@ const registDB = async () => {
             }
         }
 
-        if (tdArray == null){
+        if (registData == null){
+            //明細テーブルに登録対象データが１行も存在しないときのエラー
             window.alert(common.getMessage('inf004'));
             return;
         }
 
         //非同期通信によるDBへのデータ登録
-        const res = await fetch("./script/fetch_regist.php", { 					
-            method: 'POST', 									
-            headers: { 'Content-Type': 'application/json' }, 	
-            body: JSON.stringify(tdArray) 							
-        });
-        const data = await res.json();
+        const processedRegistID = await common.registDB(registData);
 
-        //登録されたデータの登録ID
-        registIDElem.value = data.registID;
+        //DB反映されたデータの登録ID（新規登録時は、新規採番された登録ID）
+        registIDElem.value = processedRegistID;
 
         //行削除チェックボックスが選択されている行の削除
         rowDel();
 
-        window.alert(common.getMessage('inf002')+data.registID);
+        //登録完了メッセージ
+        window.alert(common.getMessage('inf002') + processedRegistID);
 
     }catch (err) {
         window.alert(err);
@@ -344,28 +347,22 @@ const registDB = async () => {
     }
 }
 
-//DB登録時メソッド
-const deleteDB = async () => {
+/**
+ * DBからのデータ削除プロセスメソッド
+ * @method
+ * @description 削除対象の登録ID取得後、DBからのデータ削除用メソッドを実行する。
+ * @author Y.Y
+ * @version 1.0.0
+ */
+const deleteProcess = async () => {
     try {
         const registIDElem = document.getElementById('registID');     //登録ID
 
-        if (registIDElem.value.trim() == ''){
-            window.alert("登録IDを半角数字で入力してください。");
-            return;
-        }
+        //非同期通信によるDBへのデータ登録
+        const processedRegistID = await common.deleteDB(registIDElem.value);
 
-        //非同期通信によるDBからのデータ削除
-        const res = await fetch("./script/fetch_delete.php", { 					
-            method: 'POST', 									
-            headers: { 'Content-Type': 'application/json' }, 	
-            body: JSON.stringify(registIDElem.value) 							
-        });
-        const data = await res.json();
-
-        // //削除されたデータの登録ID
-        // registIDElem.value = data.registID;
-
-        window.alert(common.getMessage('inf005')+data.registID);
+        //削除完了メッセージ
+        window.alert(common.getMessage('inf005') + processedRegistID);
 
     }catch (err) {
         window.alert(err);
@@ -373,16 +370,26 @@ const deleteDB = async () => {
     }
 }
 
-const registButtonClick = () => {
+/**
+ * DB反映ボタンクリック時メソッド
+ * @method
+ * @description 登録モードで「新規・更新」選択時は、DBへのデータ登録用メソッドを実行し、\
+ * 登録モードで「削除」選択時は、DBからデータ削除用メソッドを実行する。
+ * @author Y.Y
+ * @version 1.0.0
+ */
+const reflectDBButtonClick = () => {
     if (document.getElementById('registMode').dbRegistMode.value != 'delete') {
-        registDB();
+        //DBへのデータ登録用メソッド
+        registProcess();
     } else {
-        deleteDB();
+        //DBからデータ削除用メソッド
+        deleteProcess();
     }
 }
 
-// DB登録ボタン押下時イベントリスナー
-document.getElementById('registButton').addEventListener('click', registButtonClick.bind(this));
+// DB反映ボタン押下時イベントリスナー
+document.getElementById('reflectDBButton').addEventListener('click', reflectDBButtonClick.bind(this));
 
 //リセット時メソッド
 const reset = () => {
@@ -453,7 +460,7 @@ const controlSetting = (canInputMode = false, canDetailReadOnly = false) => {
         document.getElementById('registID').disabled = false;
 
         document.getElementById('searchButton').disabled = false;
-        document.getElementById('registButton').disabled = true;
+        document.getElementById('reflectDBButton').disabled = true;
         document.getElementById('addRowButton').disabled = true;
         document.getElementById('delRowButton').disabled = true;
 
@@ -462,7 +469,7 @@ const controlSetting = (canInputMode = false, canDetailReadOnly = false) => {
         document.getElementById('registID').disabled = true;
 
         document.getElementById('searchButton').disabled = true;
-        document.getElementById('registButton').disabled = false;
+        document.getElementById('reflectDBButton').disabled = false;
         document.getElementById('addRowButton').disabled = false;
         document.getElementById('delRowButton').disabled = false;
     }

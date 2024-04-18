@@ -192,6 +192,76 @@ export const searchDB = async (registID) => {
 }
 
 /**
+ * DBへのデータ登録メソッド
+ * @method
+ * @param {object} registData 配列データ（登録データ）
+ * @return {string} 登録されたデータの登録ID（新規登録時は、新規採番された登録ID）
+ * @description 配列データをDBへ登録する。
+ * @author Y.Y
+ * @version 1.0.0
+ */
+export const registDB = async (registData) => {
+
+    //非同期通信によるDBへのデータ登録
+    const res = await fetch("./script/fetch_regist.php", { 					
+        method: 'POST', 									
+        headers: { 'Content-Type': 'application/json' }, 	
+        body: JSON.stringify(registData) 							
+    });
+
+    if (!res.ok) {
+        switch (res.status) {
+            case 400: throw new Error(getMessage('err400'));
+            case 401: throw new Error(getMessage('err401'));
+            case 404: throw new Error(getMessage('err404'));
+            case 500: throw new Error(getMessage('err500'));
+            default:  throw new Error(getMessage('err999'));
+        }
+    }
+
+    const data = await res.json();
+
+    //登録されたデータの登録ID（新規登録時は、新規採番された登録ID）
+    return data.registID;
+
+}
+
+/**
+ * DBからのデータ削除メソッド
+ * @method
+ * @param {string} registID 削除対象の登録ID
+ * @return {string} 削除されたデータの登録ID
+ * @description 登録IDに該当するデータをDBから削除する。
+ * @author Y.Y
+ * @version 1.0.0
+ */
+export const deleteDB = async (registID) => {
+
+    //非同期通信によるDBからのデータ削除
+    const res = await fetch("./script/fetch_delete.php", { 					
+        method: 'POST', 									
+        headers: { 'Content-Type': 'application/json' }, 	
+        body: JSON.stringify(registID) 							
+    });
+
+    if (!res.ok) {
+        switch (res.status) {
+            case 400: throw new Error(getMessage('err400'));
+            case 401: throw new Error(getMessage('err401'));
+            case 404: throw new Error(getMessage('err404'));
+            case 500: throw new Error(getMessage('err500'));
+            default:  throw new Error(getMessage('err999'));
+        }
+    }
+
+    const data = await res.json();
+
+    //削除されたデータの登録ID
+    return data.registID;
+
+}
+
+/**
  * 適格請求書発行事業Noフォーマットチェックメソッド
  * @method
  * @param {string} cd 適格請求書発行事業No
