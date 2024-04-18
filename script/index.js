@@ -391,7 +391,13 @@ const reflectDBButtonClick = () => {
 // DB反映ボタン押下時イベントリスナー
 document.getElementById('reflectDBButton').addEventListener('click', reflectDBButtonClick.bind(this));
 
-//リセット時メソッド
+/**
+ * リセット時メソッド
+ * @method
+ * @description 画面のコントロール類を初期状態にリセットする。
+ * @author Y.Y
+ * @version 1.0.0
+ */
 const reset = () => {
     //コントロールの入力可否設定
     controlSetting();
@@ -408,7 +414,13 @@ const reset = () => {
 // リセットボタン押下時イベントリスナー
 document.getElementById('resetButton').addEventListener('click', reset.bind(this));
 
-//新規登録モード切替え時メソッド
+/**
+ * 新規登録モード切替えメソッド
+ * @method
+ * @description 画面のコントロール類を新規登録モードに切り替える。
+ * @author Y.Y
+ * @version 1.0.0
+ */
 const newRegist = () => {
 
     //コントロールの入力可否設定
@@ -426,7 +438,13 @@ const newRegist = () => {
     }
 }
 
-//削除モード切り替えメソッド時メソッド
+/**
+ * 削除モード切替えメソッド
+ * @method
+ * @description 画面のコントロール類を削除モードに切り替える。
+ * @author Y.Y
+ * @version 1.0.0
+ */
 const deleteData = () => {
         //コントロールの入力可否設定
         controlSetting();
@@ -452,7 +470,15 @@ registMode.addEventListener('change', () => {
     }
 });
 
-//コントロールの入力可否設定
+/**
+ * コントロールの入力可否設定メソッド
+ * @method
+ * @param {boolean} canInputMode コントロールを入力用のモードに切り替えるか（初期値:false）
+ * @param {boolean} canDetailReadOnly 明細テーブルを読み取り専用に切り替えるか（初期値:false）
+ * @description 画面のコントロール類を削除モードに切り替える。
+ * @author Y.Y
+ * @version 1.0.0
+ */
 const controlSetting = (canInputMode = false, canDetailReadOnly = false) => {
 
     if ( canInputMode == false ){
@@ -484,9 +510,14 @@ const controlSetting = (canInputMode = false, canDetailReadOnly = false) => {
             elem.childNodes[0].disabled = true;
         }
     }
-
 }
 
+/**
+ * ロードイベント
+ * @method
+ * @author Y.Y
+ * @version 1.0.0
+ */
 window.onload = () => {
 
     try{
