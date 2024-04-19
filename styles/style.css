@@ -41,6 +41,7 @@ table {
 th {
     background-color: #A9A9A9;  /* 背景色指定 */
 }
+
 .sticky {
     position: sticky;
     top: 0;

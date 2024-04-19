@@ -13,7 +13,7 @@ try {
 	$db->beginTransaction();
 
 	//更新登録時（前回データの削除）
-	$stt = $db->prepare('delete from  t_location where registID = :registID');
+	$stt = $db->prepare('delete from  t_spa_confirm where registID = :registID');
 	$stt->bindValue(':registID', $key);
 	$stt->execute();
 

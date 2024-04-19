@@ -387,7 +387,6 @@ const reflectDBButtonClick = () => {
         deleteProcess();
     }
 }
-
 // DB反映ボタン押下時イベントリスナー
 document.getElementById('reflectDBButton').addEventListener('click', reflectDBButtonClick.bind(this));
 

@@ -2,7 +2,6 @@
 
 $raw = file_get_contents('php://input'); 					// POSTされた生のデータを受け取る
 
-//$dsn = 'mysql:dbname=testdb; host=127.0.0.1; charset=utf8';
 $dsn = 'mysql:dbname=testdb; host=127.0.0.1; charset=utf8mb4';		//サロゲートペア対応
 $usr = 'root';
 $passwd = '';
@@ -17,13 +16,13 @@ try {
 
 	if ($registID == ''){
 		//新規登録時（登録ID新規採番）
-		$stt = $db->prepare('select max(registID) as lastRegistID from t_location');
+		$stt = $db->prepare('select max(registID) as lastRegistID from t_spa_confirm');
 		$stt->execute();
 		$row = $stt->fetch(PDO::FETCH_ASSOC);
 		$registID = $row['lastRegistID'] + 1;
 	} else {
 		//更新登録時（前回データの削除）
-		$stt = $db->prepare('delete from  t_location where registID = :registID');
+		$stt = $db->prepare('delete from  t_spa_confirm where registID = :registID');
 		$stt->bindValue(':registID', $registID);
 		$stt->execute();
 	}
@@ -44,7 +43,7 @@ try {
 		$arr['tekikakuName'.$rowNo] = $obj->tekikakuName;
 	}
 
-	$stt = $db->prepare('insert into t_location (registID,rowNo,prefecture,city,tekikakuNo,tekikakuName) values '.$values);
+	$stt = $db->prepare('insert into t_spa_confirm (registID,rowNo,prefecture,city,tekikakuNo,tekikakuName) values '.$values);
 
 	//プレースホルダへ登録値のバインド
 	foreach($arr as $key => $value) $stt->bindValue(':'.$key, $value);

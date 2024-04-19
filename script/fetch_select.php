@@ -1,6 +1,6 @@
 <?php
 
-// CREATE TABLE `t_location` (
+// CREATE TABLE `t_spa_confirm` (
 // 	`id` int(11) NOT NULL AUTO_INCREMENT,
 // 	`registID` int(5) NOT NULL,
 // 	`rowNo` int(3) NOT NULL,
@@ -10,12 +10,10 @@
 // 	`tekikakuName` varchar(600) DEFAULT NULL,
 // 	PRIMARY KEY (`id`)
 // 	) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci
-// //	) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci
 
 $raw = file_get_contents('php://input'); 	// POSTされた生のデータを受け取る
 $key = json_decode($raw); 					// json形式をphp変数に変換
 
-//$dsn = 'mysql:dbname=testdb; host=127.0.0.1; charset=utf8';
 $dsn = 'mysql:dbname=testdb; host=127.0.0.1; charset=utf8mb4';		//サロゲートペア対応
 $usr = 'root';
 $passwd = '';
@@ -24,7 +22,7 @@ try {
 //①DB接続ありパターン start
 	$db = new PDO($dsn, $usr, $passwd);
 	
-	$stt = $db->prepare('select * from t_location where registID = :registID order by rowNo');
+	$stt = $db->prepare('select * from t_spa_confirm where registID = :registID order by rowNo');
 	$stt->bindValue(':registID', $key);
 	$stt->execute();
 
