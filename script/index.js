@@ -124,6 +124,8 @@ const setTekikaku = async (tekikakuNoElemId, tekikakuNameElemId) => {
     }catch(err){
         window.alert(err);
         console.log(err,"error");
+        document.getElementById(tekikakuNoElemId).value = '';
+        document.getElementById(tekikakuNameElemId).innerText = '';
     }
 }
 
