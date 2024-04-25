@@ -3,12 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="styles/style.css" rel="stylesheet" />
+    <link href="./styles/style.css" rel="stylesheet" />
     <title>SPA動作確認画面</title>
 </head>
 <body>
 
-    <script type="module" src="./script/index.js" defer></script>
+    <?php require_once "./signManager/checkSignIn.php" ?>
+
+    <script type="module" src="./script/spaConfirm.js" defer></script>
+
+    <?php include "./header.php" ?>
+
 
     <h2>連動リスト及び非同期通信でのDB更新処理</h2>
     <table>
