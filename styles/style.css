@@ -6,8 +6,10 @@ html {
 
 header {
     width:1551px;
-    height:80px;
-    border: 2px solid #000000;
+    height:100px;
+    /* border: 2px solid #000000; */
+    background: linear-gradient(#909090, #A9A9A9); 
+    /* color:#FAFAFA; */
 }
 
 input,button,label,select {
@@ -32,7 +34,7 @@ h2 {
 
 .tableBox{
     overflow-y: auto;
-    border: 2px solid #000000;
+    /* border: 2px solid #000000; */
     height: 424px;
     width:1551px;
     background-color: #F0F0F0;  /* 背景色指定 */

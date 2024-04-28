@@ -12,10 +12,12 @@
 
     <script type="module" src="./script/spaConfirm.js" defer></script>
 
-    <?php include "./header.php" ?>
+    <?php 
+    $title = '連動リスト及び非同期通信でのDB更新処理';
+    include "./header.php" ;
+    ?>
 
-
-    <h2>連動リスト及び非同期通信でのDB更新処理</h2>
+    <br>
     <table>
         <tr>
             <td style="width:436px">
@@ -75,17 +77,6 @@
             <option value="">選択してください</option>
         </select>
     </div>
-
-<!-- WebAPIからの値取得 start -->
-    <br>
-    <hr>
-    <h2>WebAPI（https://jsonplaceholder.typicode.com/users/）からの値取得</h2>
-    IDに1～10までの値を入力してください<br>
-    ID:<input id="inputID" type="number"></input><br>
-    <label id="result1"></label><br>
-    <label id="result2"></label><br>
-    <label id="result3"></label>
-<!-- WebAPIからの値取得 end -->
 
     <noscript>javascriptが利用できません。</noscript>
 </body>

@@ -33,8 +33,8 @@ if ($member != false && password_verify($_POST['pass'], $member['pass'])) {
     $_SESSION['pass'] = $member['pass'];
     $msg = 'ログインしました。';
 //    $link = '<a href="../index.php">ホーム</a>';
-//    $link = '<a href="../spaConfirm.php">SPA確認</a>';
-    header('Location: http://'.$_SERVER['HTTP_HOST'].dirname($_SERVER['SCRIPT_NAME'], 2).'/spaConfirm.php');
+//    $link = '<a href="../menu.php">SPA確認</a>';
+    header('Location: http://'.$_SERVER['HTTP_HOST'].dirname($_SERVER['SCRIPT_NAME'], 2).'/menu.php');
     exit();
 } else {
     $msg = 'メールアドレスもしくはパスワードが間違っています。';
