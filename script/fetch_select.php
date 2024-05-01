@@ -1,15 +1,23 @@
 <?php
 
-// CREATE TABLE `t_spa_confirm` (
-// 	`id` int(11) NOT NULL AUTO_INCREMENT,
-// 	`registID` int(5) NOT NULL,
-// 	`rowNo` int(3) NOT NULL,
-// 	`prefecture` varchar(255) DEFAULT NULL,
-// 	`city` varchar(255) DEFAULT NULL,
-// 	`tekikakuNo` char(14) DEFAULT NULL,
-// 	`tekikakuName` varchar(600) DEFAULT NULL,
-// 	PRIMARY KEY (`id`)
-// 	) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci
+/**
+ * t_spa_confirmテーブルからのデータ取得処理
+ * @description postされた登録IDに該当するレコードをt_spa_confirmテーブルから取得し、\
+ * JSON文字列形式で標準出力する。
+ */
+
+/* t_spa_confirmテーブルのCreateTable文
+ CREATE TABLE `t_spa_confirm` (
+ 	`id` int(11) NOT NULL AUTO_INCREMENT,
+ 	`registID` int(5) NOT NULL,
+ 	`rowNo` int(3) NOT NULL,
+ 	`prefecture` varchar(255) DEFAULT NULL,
+ 	`city` varchar(255) DEFAULT NULL,
+ 	`tekikakuNo` char(14) DEFAULT NULL,
+ 	`tekikakuName` varchar(600) DEFAULT NULL,
+ 	PRIMARY KEY (`id`)
+ 	) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci
+*/
 
 $raw = file_get_contents('php://input'); 	// POSTされた生のデータを受け取る
 $key = json_decode($raw); 					// json形式をphp変数に変換

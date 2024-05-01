@@ -1,5 +1,13 @@
 <?php
 
+/**
+ * t_spa_confirmテーブルへのデータ登録処理
+ * @description postされたJSON文字列を、t_spa_confirmテーブルへ登録する。\
+ * 登録データ1件目のregistIDがブランク時は新規登録とし、登録IDを新規採番した後、登録データをInsertする。\
+ * 登録データ1件目のregistIDが設定されている時は更新とし、登録IDが一致する既存データを削除後、登録データをInsertする。(DeleteInsert処理する。\
+ * t_spa_confirmテーブルへ登録したデータのregistIDを標準出力する。
+ */
+
 $raw = file_get_contents('php://input'); 					// POSTされた生のデータを受け取る
 
 $dsn = 'mysql:dbname=testdb; host=127.0.0.1; charset=utf8mb4';		//サロゲートペア対応

@@ -1,5 +1,11 @@
 <?php
 
+/**
+ * t_spa_confirmテーブルからのデータ削除処理
+ * @description postされた登録IDに該当するレコードをt_spa_confirmテーブルから削除する。\
+ * t_spa_confirmテーブルから削除したデータのregistIDを標準出力する。
+ */
+
 $raw = file_get_contents('php://input'); 							// POSTされた生のデータを受け取る
 $key = json_decode($raw); 											// json形式をphp変数に変換
 

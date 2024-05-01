@@ -21,7 +21,7 @@
 
   <div style="text-align:right;">
     <label>利用者：<?php echo $name; ?></label>&nbsp;
-    <button id="logOutButton" onclick="location.href='./signManager/signOut.php'">ログアウト</button>&nbsp;
+    <button id="logOutButton" onclick="location.href='./signManager/signOut.php'">サインアウト</button>&nbsp;
   </div>
 
   <?php

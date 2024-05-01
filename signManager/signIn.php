@@ -1,12 +1,21 @@
 <?php
 
-// CREATE TABLE `m_users` (
-//     `id` int(11) NOT NULL AUTO_INCREMENT,
-//     `name` varchar(50) NOT NULL,
-//     `mail` varchar(100) NOT NULL,
-//     `pass` varchar(100) NOT NULL,            #PHPでpassword_hashによりハッシュ値に変換時、60文字以上に暗号化されるため、カラム長60文字以上（上限不明）の設定が必要。
-//     PRIMARY KEY (`id`)
-//   ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci
+/**
+ * サインイン処理
+ * @description POSTされたメールアドレス(ログインID)とパスワードの組み合わせが、\
+ * m_usersテーブルに登録されている値と一致する場合、POSTされた情報をセッションに登録後、メニュー画面にリダイレクトする。\
+ * m_usersテーブルに登録されている値と一致しない場合、エラーメッセージの表示及び、サインイン画面へのリンクを表示する。
+ */
+
+/* m_usersテーブルのCreateTable文
+ CREATE TABLE `m_users` (
+     `id` int(11) NOT NULL AUTO_INCREMENT,
+     `name` varchar(50) NOT NULL,
+     `mail` varchar(100) NOT NULL,
+     `pass` varchar(100) NOT NULL,            #PHPでpassword_hashによりハッシュ値に変換時、60文字以上に暗号化されるため、カラム長60文字以上（上限不明）の設定が必要。
+     PRIMARY KEY (`id`)
+   ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci
+*/
 
 session_start();
 $mail = $_POST['mail'];
@@ -31,11 +40,13 @@ if ($member != false && password_verify($_POST['pass'], $member['pass'])) {
     $_SESSION['name'] = $member['name'];
     $_SESSION['mail'] = $member['mail'];
     $_SESSION['pass'] = $member['pass'];
-    $msg = 'ログインしました。';
-//    $link = '<a href="../index.php">ホーム</a>';
-//    $link = '<a href="../menu.php">SPA確認</a>';
+
+//    $msg = 'サインインしました。';
+//    $link = '<a href="../menu.php">メニュー画面</a>';
+    //メニュー画面へリダイレクト
     header('Location: http://'.$_SERVER['HTTP_HOST'].dirname($_SERVER['SCRIPT_NAME'], 2).'/menu.php');
     exit();
+
 } else {
     $msg = 'メールアドレスもしくはパスワードが間違っています。';
     $link = '<a href="./signInForm.php">戻る</a>';

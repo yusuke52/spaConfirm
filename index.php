@@ -1,18 +1,13 @@
 <?php
 session_start();
-if (isset($_SESSION['id'])) {//ログインしているとき
-    // $username = $_SESSION['name'];
-    // $msg = 'こんにちは' . htmlspecialchars($username, \ENT_QUOTES, 'UTF-8') . 'さん';
-    // $link = '<a href="./signManager/signOut.php">ログアウト</a>';
+if (isset($_SESSION['id'])) {
+    //ログインしている時、メニュー画面にリダイレクト
     header('Location: http://'.$_SERVER['HTTP_HOST'].dirname($_SERVER['SCRIPT_NAME']).'/menu.php');
     exit();
 
-} else {//ログインしていない時
-    // $msg = 'ログインしていません';
-    // $link = '<a href="./signManager/signInForm.php">ログイン</a>';
+} else {
+    //ログインしていない時、サイン画面にリダイレクト
     header('Location: http://'.$_SERVER['HTTP_HOST'].dirname($_SERVER['SCRIPT_NAME']).'/signManager/signInForm.php');
     exit();
 }
 ?>
-<h1><?php echo $msg; ?></h1>
-<?php echo $link; ?>

@@ -1,4 +1,4 @@
-<h1>ログインページ</h1>
+<h1>サインインページ</h1>
 <form action="./signIn.php" method="post">
 <div>
     <label>
@@ -12,6 +12,6 @@
         <input type="password" name="pass" required>
     </label>
 </div>
-<input type="submit" value="ログイン">
+<input type="submit" value="サインイン">
 <a href="./signUpForm.php">ユーザ登録</a>
 </form>
