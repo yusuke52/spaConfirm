@@ -6,15 +6,15 @@
  * t_spa_confirmテーブルから削除したデータのregistIDを標準出力する。
  */
 
+ // configファイル読み込み
+require_once '../config/config.php';
+
 $raw = file_get_contents('php://input'); 							// POSTされた生のデータを受け取る
 $key = json_decode($raw); 											// json形式をphp変数に変換
 
-$dsn = 'mysql:dbname=testdb; host=127.0.0.1; charset=utf8mb4';		//サロゲートペア対応
-$usr = 'root';
-$passwd = '';
-
 try {
-	$db = new PDO($dsn, $usr, $passwd);
+
+	$db = new PDO(Config::get('dsn'), Config::get('usr'), Config::get('passwd'));
 
 	$db->beginTransaction();
 

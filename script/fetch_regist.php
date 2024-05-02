@@ -8,14 +8,14 @@
  * t_spa_confirmテーブルへ登録したデータのregistIDを標準出力する。
  */
 
-$raw = file_get_contents('php://input'); 					// POSTされた生のデータを受け取る
+// configファイル読み込み
+require_once '../config/config.php';
 
-$dsn = 'mysql:dbname=testdb; host=127.0.0.1; charset=utf8mb4';		//サロゲートペア対応
-$usr = 'root';
-$passwd = '';
+$raw = file_get_contents('php://input'); 			// POSTされた生のデータを受け取る
 
 try {
-	$db = new PDO($dsn, $usr, $passwd);
+	
+	$db = new PDO(Config::get('dsn'), Config::get('usr'), Config::get('passwd'));
 
 	$db->beginTransaction();
 

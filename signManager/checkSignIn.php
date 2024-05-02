@@ -7,25 +7,31 @@
  * サインイン状態でないとき、sessionError.phpにリダイレクトする。
  */
 
+    // configファイル読み込み
+    //(当ファイル(checkSignIn.php)は他ファイルからのrequireにより実行される。このため、相対パスをそのまま記述すると、
+    // 呼び出し元ファイルからの相対パスを参照しに行くことになり、エラーが発生する。
+    // 上記エラーを回避するため、__DIR__で当ファイルの絶対パスを取得し、そこからの相対パスを参照するようにする事。)
+    require_once __DIR__.'/../config/config.php';
+
     session_start();
 
     if( isset($_SESSION['mail']) && isset($_SESSION['pass']) ){
-        $dsn = "mysql:host=localhost; dbname=testdb; charset=utf8";
-        $username = "root";
-        $password = "";
         try {
-            $dbh = new PDO($dsn, $username, $password);
+            $dbh = new PDO(Config::get('dsn'), Config::get('usr'), Config::get('passwd'));
+
+            $sql = "SELECT * FROM m_users WHERE mail = :mail and pass = :pass";
+            $stmt = $dbh->prepare($sql);
+            $stmt->bindValue(':mail', $_SESSION['mail']);
+            $stmt->bindValue(':pass', $_SESSION['pass']);
+            $stmt->execute();
+            $member = $stmt->fetch();
+    
         } catch (PDOException $e) {
             $msg = $e->getMessage();
+        } finally {
+            $dbh = null;
         }
-        
-        $sql = "SELECT * FROM m_users WHERE mail = :mail and pass = :pass";
-        $stmt = $dbh->prepare($sql);
-        $stmt->bindValue(':mail', $_SESSION['mail']);
-        $stmt->bindValue(':pass', $_SESSION['pass']);
-        $stmt->execute();
-        $member = $stmt->fetch();
-
+                
         //セッションに設定されているmailとpassの組み合わせがDBに存在するかのチェック
         if ($member == false) {
             header('Location: http://'.$_SERVER['HTTP_HOST'].dirname($_SERVER['SCRIPT_NAME']).'/sessionError.php');

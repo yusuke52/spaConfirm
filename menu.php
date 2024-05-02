@@ -46,9 +46,9 @@
             grid-area: areaC;
             /* background: #88f; */
             background:radial-gradient(#CCCC66, #CC9900); 
-            place-content: center;
             border: 2px solid #CC6600;
             border-radius: 5px;
+            place-content: center;
         }
     </style>
 
