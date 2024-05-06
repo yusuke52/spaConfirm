@@ -20,8 +20,18 @@
 // configファイル読み込み
 require_once '../config/config.php';
 
+// logファイル読み込み
+require_once '../log/log.php';
+
+// LogWriteクラス
+$logWrite = new LogWrite();
+
+$logWrite->LogWriting('start:'.basename(__FILE__));     //ログ出力
+
 session_start();
 $mail = $_POST['mail'];
+
+$logWrite->LogWriting('POSTされた値=メールアドレス:'.$mail);     //ログ出力
 
 try {
     $dbh = new PDO(Config::get('dsn'), Config::get('usr'), Config::get('passwd'));
@@ -34,6 +44,7 @@ try {
     
 } catch (PDOException $e) {
     $msg = $e->getMessage();
+    $logWrite->LogWriting($msg,true);   //ログ出力
 } finally {
 	$dbh = null;
 }
@@ -49,14 +60,22 @@ if ($member != false && password_verify($_POST['pass'], $member['pass'])) {
 //    $msg = 'サインインしました。';
 //    $link = '<a href="../menu.php">メニュー画面</a>';
 
+    $logWrite->LogWriting('サインインしました。'.sprintf('　名前:%s メールアドレス:%s',$_SESSION['name'], $_SESSION['mail']));     //ログ出力
+
     //メニュー画面へリダイレクト
     header('Location: http://'.$_SERVER['HTTP_HOST'].dirname($_SERVER['SCRIPT_NAME'], 2).'/menu.php');
+
+    $logWrite->LogWriting('end:'.basename(__FILE__));     //ログ出力
     exit();
 
 } else {
     $msg = 'メールアドレスもしくはパスワードが間違っています。';
     $link = '<a href="./signInForm.php">戻る</a>';
+
+    $logWrite->LogWriting($msg.sprintf('　メールアドレス:%s', $mail));     //ログ出力
+
 }
+$logWrite->LogWriting('end:'.basename(__FILE__));     //ログ出力
     
 ?>
 

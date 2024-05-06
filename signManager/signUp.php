@@ -12,10 +12,20 @@
 // configファイル読み込み
 require_once '../config/config.php';
 
+// logファイル読み込み
+require_once '../log/log.php';
+
+// LogWriteクラス
+$logWrite = new LogWrite();
+
+$logWrite->LogWriting('start:'.basename(__FILE__));     //ログ出力
+
 //POSTされた値を変数に代入
 $name = $_POST['name'];
 $mail = $_POST['mail'];
 $pass = password_hash($_POST['pass'], PASSWORD_DEFAULT);
+
+$logWrite->LogWriting('POSTされた値='.sprintf('　名前:%s メールアドレス:%s',$name,$mail));     //ログ出力
 
 try {
 
@@ -45,13 +55,19 @@ try {
         $link = '<a href="./signInForm.php">サインインページ</a>';
     }
 
+    $logWrite->LogWriting($msg.sprintf('　名前:%s メールアドレス:%s',$name,$mail));     //ログ出力
+
 } catch (PDOException $e) {
     $msg = $e->getMessage();
+    $logWrite->LogWriting($msg,true);   //ログ出力
 } catch (Exception $e){
     $msg = $e->getMessage();
+    $logWrite->LogWriting($msg,true);   //ログ出力
 } finally {
 	$dbh = null;
 }
+
+$logWrite->LogWriting('end:'.basename(__FILE__));     //ログ出力
 
 ?>
 

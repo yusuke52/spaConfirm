@@ -22,8 +22,17 @@
 // configファイル読み込み
 require_once '../config/config.php';
 
+// logファイル読み込み
+require_once '../log/log.php';
+
+// LogWriteクラス
+$logWrite = new LogWrite();
+$logWrite->LogWriting('start:'.basename(__FILE__));     //ログ出力
+
 $raw = file_get_contents('php://input'); 	// POSTされた生のデータを受け取る
 $key = json_decode($raw); 					// json形式をphp変数に変換
+
+$logWrite->LogWriting('POSTされた値=登録ID:'.$key);     //ログ出力
 
 try {
 //①DB接続ありパターン start
@@ -53,12 +62,21 @@ try {
 	// echo $json_array;
 //②DB接続なしパターン end
 
+	$logWrite->LogWriting(sprintf('登録ID:%s t_spa_confirmテーブル抽出結果:%s',$key,$json_array));     //ログ出力
+
 } catch (PDOException $e){
-	print "接続エラー:{$e->getMessage()}";
+	$msg = $e->getMessage();
+	print "接続エラー:{$msg}";
+    $logWrite->LogWriting('登録ID:'.$key.' エラー内容:'.$msg,true);   //ログ出力
 } catch (Exception $e){
-	print "エラー:{$e->getMessage()}";
+	$msg = $e->getMessage();
+	print "エラー:{$msg}";
+    $logWrite->LogWriting('登録ID:'.$key.' エラー内容:'.$msg,true);   //ログ出力
 } finally {
 	$db = null;
 }
+
+$logWrite->LogWriting('end:'.basename(__FILE__));     //ログ出力
 exit;
+
 ?>
