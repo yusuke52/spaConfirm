@@ -62,8 +62,13 @@ if ($member != false && password_verify($_POST['pass'], $member['pass'])) {
 
     $logWrite->LogWriting('サインインしました。'.sprintf('　名前:%s メールアドレス:%s',$_SESSION['name'], $_SESSION['mail']));     //ログ出力
 
+    if (isset($_SERVER['HTTPS']) AND $_SERVER['HTTPS'] == 'on') {
+        $protocol = 'https://'; 
+     }else{
+        $protocol = 'http://'; 
+     }
     //メニュー画面へリダイレクト
-    header('Location: http://'.$_SERVER['HTTP_HOST'].dirname($_SERVER['SCRIPT_NAME'], 2).'/menu.php');
+    header('Location: '.$protocol.$_SERVER['HTTP_HOST'].dirname($_SERVER['SCRIPT_NAME'], 2).'/menu.php');
 
     $logWrite->LogWriting('end:'.basename(__FILE__));     //ログ出力
     exit();
