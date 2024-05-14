@@ -101,7 +101,12 @@ const setCityListWithErrHandler = async (prefectureid, cityid) => {
  */
 const setTekikaku = async (tekikakuNoElemId, tekikakuNameElemId) => {
 
+    let reflectDBButtonElem = document.getElementById('reflectDBButton');
+
     try{
+        //非同期通信中は、DB反映ボタンを押下不可にする。
+        reflectDBButtonElem.disabled = true;
+
         let tekikakuNoElem = document.getElementById(tekikakuNoElemId);
         let tekikakuNameElem = document.getElementById(tekikakuNameElemId);
         if (tekikakuNoElem.value.trim() == '') {
@@ -126,6 +131,9 @@ const setTekikaku = async (tekikakuNoElemId, tekikakuNameElemId) => {
         console.log(err,"error");
         document.getElementById(tekikakuNoElemId).value = '';
         document.getElementById(tekikakuNameElemId).innerText = '';
+    } finally {
+        //非同期通信完了後、DB反映ボタンを押下可能にする。
+        reflectDBButtonElem.disabled = false;
     }
 }
 

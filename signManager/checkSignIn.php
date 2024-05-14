@@ -37,14 +37,22 @@
         } finally {
             $dbh = null;
         }
-                
+
         //セッションに設定されているmailとpassの組み合わせがDBに存在するかのチェック
         if ($member == false) {
-            header('Location: '.$protocol.$_SERVER['HTTP_HOST'].dirname($_SERVER['SCRIPT_NAME']).'/sessionError.php');
+            //当該ファイルのドキュメントルート以降のフォルダ構成を取得する。
+            $path = str_replace(dirname(__DIR__,2), '', __DIR__);
+            $path = preg_replace('/\\\/u', '/', $path);
+
+            header('Location: '.$protocol.$_SERVER['HTTP_HOST'].':'.$_SERVER['SERVER_PORT'].$path.'/sessionError.php');
             exit();
         }
     } else {
-        header('Location: '.$protocol.$_SERVER['HTTP_HOST'].':'.$_SERVER['SERVER_PORT'].dirname($_SERVER['SCRIPT_NAME']).'/sessionError.php');
+        //当該ファイルのドキュメントルート以降のフォルダ構成を取得する。
+        $path = str_replace(dirname(__DIR__,2), '', __DIR__);
+        $path = preg_replace('/\\\/u', '/', $path);
+
+        header('Location: '.$protocol.$_SERVER['HTTP_HOST'].':'.$_SERVER['SERVER_PORT'].$path.'/sessionError.php');
         exit();
     }
 ?>

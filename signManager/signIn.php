@@ -68,7 +68,7 @@ if ($member != false && password_verify($_POST['pass'], $member['pass'])) {
         $protocol = 'http://'; 
      }
     //メニュー画面へリダイレクト
-    header('Location: '.$protocol.$_SERVER['HTTP_HOST'].dirname($_SERVER['SCRIPT_NAME'], 2).'/menu.php');
+    header('Location: '.$protocol.$_SERVER['HTTP_HOST'].':'.$_SERVER['SERVER_PORT'].dirname($_SERVER['SCRIPT_NAME'], 2).'/menu.php');
 
     $logWrite->LogWriting('end:'.basename(__FILE__));     //ログ出力
     exit();
